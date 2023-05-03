@@ -1,6 +1,5 @@
 package com.spring.binar.challenge_5.service;
 
-import com.spring.binar.challenge_5.dto.PaymentDTO;
 import com.spring.binar.challenge_5.models.Payment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

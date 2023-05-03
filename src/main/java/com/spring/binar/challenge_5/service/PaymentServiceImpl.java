@@ -1,6 +1,5 @@
 package com.spring.binar.challenge_5.service;
 
-import com.spring.binar.challenge_5.dto.PaymentDTO;
 import com.spring.binar.challenge_5.models.Payment;
 import com.spring.binar.challenge_5.repos.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;

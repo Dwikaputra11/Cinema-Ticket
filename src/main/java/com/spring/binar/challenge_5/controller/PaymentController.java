@@ -1,6 +1,7 @@
 package com.spring.binar.challenge_5.controller;
 
-import com.spring.binar.challenge_5.dto.PaymentDTO;
+import com.spring.binar.challenge_5.dto.PaymentRequestDTO;
+import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
 import com.spring.binar.challenge_5.models.Payment;
 import com.spring.binar.challenge_5.service.PaymentService;
 import com.spring.binar.challenge_5.utils.ResponseHandler;
@@ -49,16 +50,17 @@ public class PaymentController {
     }
 
     @PostMapping("/payment")
-    public ResponseEntity<Object> save(@RequestBody PaymentDTO paymentDTO){
-        Payment payment = modelMapper.map(paymentDTO, Payment.class);
-        var request = paymentService.save(payment);
-        var data = paymentService.findById(request.getPaymentId());
+    public ResponseEntity<Object> save(@RequestBody PaymentRequestDTO paymentRequestDTO){
+        Payment payment = modelMapper.map(paymentRequestDTO, Payment.class);
+        var data = paymentService.save(payment);
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.CREATED, data);
     }
 
     @PutMapping("/payment")
     public ResponseEntity<Object> update(@RequestBody Payment payment){
         var data = paymentService.update(payment);
+        char s = ' ';
+
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK, data);
     }
 
@@ -66,6 +68,11 @@ public class PaymentController {
     public ResponseEntity<Object> delete(@PathVariable("id") int id){
         paymentService.delete(id);
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK, id);
+    }
+
+    private PaymentResponseDTO convertToDto(Payment payment) {
+        PaymentResponseDTO postDto = modelMapper.map(payment, PaymentResponseDTO.class);
+        return postDto;
     }
 
 }

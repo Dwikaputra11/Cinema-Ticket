@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.util.Date;
 @Data
-public class PaymentDTO {
+public class PaymentRequestDTO {
     int paymentId;
     Date paymentDate;
     int amount;
