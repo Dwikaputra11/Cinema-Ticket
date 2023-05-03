@@ -59,7 +59,6 @@ public class PaymentController {
     @PutMapping("/payment")
     public ResponseEntity<Object> update(@RequestBody Payment payment){
         var data = paymentService.update(payment);
-        char s = ' ';
 
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK, data);
     }

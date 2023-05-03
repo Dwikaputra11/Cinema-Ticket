@@ -1,7 +1,8 @@
-package com.spring.binar.challenge_5.service;
+package com.spring.binar.challenge_5.service.implementation;
 
 import com.spring.binar.challenge_5.models.Seat;
 import com.spring.binar.challenge_5.repos.SeatRepository;
+import com.spring.binar.challenge_5.service.SeatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class SeatServiceImpl implements SeatService{
+public class SeatServiceImpl implements SeatService {
     private final SeatRepository seatRepository;
     @Autowired
     public SeatServiceImpl(SeatRepository seatRepository) {

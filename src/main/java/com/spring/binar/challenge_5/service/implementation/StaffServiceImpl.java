@@ -1,14 +1,15 @@
-package com.spring.binar.challenge_5.service;
+package com.spring.binar.challenge_5.service.implementation;
 
 import com.spring.binar.challenge_5.models.Staff;
 import com.spring.binar.challenge_5.repos.StaffRepository;
+import com.spring.binar.challenge_5.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StaffServiceImpl implements StaffService{
+public class StaffServiceImpl implements StaffService {
     private final StaffRepository staffRepository;
     @Autowired
     public StaffServiceImpl(StaffRepository staffRepository) {
