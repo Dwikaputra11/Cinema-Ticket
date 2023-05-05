@@ -25,6 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class PaymentController {
@@ -42,14 +44,14 @@ public class PaymentController {
 
     @GetMapping("/payment")
     public ResponseEntity<Object> findAll(
-            @RequestParam(defaultValue ="0") int page,
-            @RequestParam(defaultValue ="10") int size
+//            @RequestParam(defaultValue ="0") int page,
+//            @RequestParam(defaultValue ="10") int size
     ){
-        Page<Payment> payments;
-        Pageable pageable = PageRequest.of(page, size);
-        payments = paymentService.findAll(pageable);
+        List<Payment> payments;
+//        Pageable pageable = PageRequest.of(page, size);
+        payments = paymentService.findAll();
 
-        return ResponseHandler.generatePagingResponse(SUCCESS_RETRIEVE_MSG, HttpStatus.OK,payments);
+        return ResponseHandler.generateResponse(SUCCESS_RETRIEVE_MSG, HttpStatus.OK,payments);
     }
 
     @GetMapping("/payment/{id}")
@@ -71,8 +73,8 @@ public class PaymentController {
 
     @PostMapping("/payment")
     public ResponseEntity<Object> save(@RequestBody PaymentRequestDTO paymentRequestDTO){
-        Payment payment = modelMapper.map(paymentRequestDTO, Payment.class);
-        var data = paymentService.save(payment);
+//        Payment payment = modelMapper.map(paymentRequestDTO, Payment.class);
+        var data = paymentService.save(paymentRequestDTO);
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.CREATED, data);
     }
 

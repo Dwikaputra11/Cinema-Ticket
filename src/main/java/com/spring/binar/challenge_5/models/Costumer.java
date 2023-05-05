@@ -2,9 +2,7 @@ package com.spring.binar.challenge_5.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,6 +10,8 @@ import java.util.Date;
 @Entity
 @Setter @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Table(name="costumer", schema = "public")
 public class Costumer implements Serializable {
 

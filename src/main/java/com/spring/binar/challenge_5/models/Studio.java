@@ -8,7 +8,10 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Data
+@Builder
+@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor
 @Table(name = "studio", schema = "public")
 public class Studio implements Serializable {
 
@@ -23,7 +26,7 @@ public class Studio implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "studio")
-    private List<Seat> seats;
+//    @JsonManagedReference
+//    @OneToMany(mappedBy = "studio")
+//    private List<Seat> seats;
 }

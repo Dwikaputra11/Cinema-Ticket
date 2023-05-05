@@ -6,9 +6,12 @@ import lombok.*;
 
 import java.io.Serializable;
 
-@Getter @Setter
-@NoArgsConstructor
+@Getter
+@Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "seat",schema = "public")
 public class Seat implements Serializable {
     @Id
@@ -23,7 +26,12 @@ public class Seat implements Serializable {
     private byte number;
 
     @JsonBackReference
-    @ManyToOne(targetEntity = Studio.class,cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = Studio.class,cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "studio_id", referencedColumnName = "studio_id", nullable = false)
     private Studio studio;
+
+    @JsonBackReference
+    @ManyToOne(targetEntity = SeatReserved.class, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "id", referencedColumnName = "id")
+    private SeatReserved seatReserved;
 }

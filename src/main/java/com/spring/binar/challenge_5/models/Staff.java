@@ -1,15 +1,15 @@
 package com.spring.binar.challenge_5.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Entity
 @Setter @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name="staff", schema = "public")
 public class Staff implements Serializable {
 

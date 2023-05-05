@@ -1,7 +1,11 @@
 package com.spring.binar.challenge_5.service.implementation;
 
+import com.spring.binar.challenge_5.dto.PaymentRequestDTO;
+import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
 import com.spring.binar.challenge_5.models.Invoice;
 import com.spring.binar.challenge_5.models.Payment;
+import com.spring.binar.challenge_5.models.SeatReserved;
+import com.spring.binar.challenge_5.repos.*;
 import com.spring.binar.challenge_5.repos.CostumerRepository;
 import com.spring.binar.challenge_5.repos.PaymentRepository;
 
@@ -23,31 +27,55 @@ import java.util.Map;
 import com.spring.binar.challenge_5.repos.ScheduleRepository;
 import com.spring.binar.challenge_5.repos.StaffRepository;
 import com.spring.binar.challenge_5.service.PaymentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    private PaymentRepository paymentRepository;
-    private ScheduleRepository scheduleRepository;
-    private CostumerRepository costumerRepository;
-    private StaffRepository staffRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+    private final PaymentRepository paymentRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final CostumerRepository costumerRepository;
+    private final StaffRepository staffRepository;
+    private final SeatReservedRepository seatReservedRepository;
+    private final SeatRepository seatRepository;
 
     @Autowired
-    public PaymentServiceImpl(PaymentRepository paymentRepository, ScheduleRepository scheduleRepository, CostumerRepository costumerRepository, StaffRepository staffRepository) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, ScheduleRepository scheduleRepository, CostumerRepository costumerRepository, StaffRepository staffRepository, SeatReservedRepository seatReservedRepository, SeatRepository seatRepository) {
         this.paymentRepository = paymentRepository;
         this.scheduleRepository = scheduleRepository;
         this.costumerRepository = costumerRepository;
         this.staffRepository =staffRepository;
+        this.seatReservedRepository = seatReservedRepository;
+        this.seatRepository = seatRepository;
     }
 
     @Override
     public Page<Payment> findAll(Pageable pageable) {
         return paymentRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Payment> findAll() {
+        var payments = paymentRepository.findAll();
+        var responses = new ArrayList<PaymentResponseDTO>();
+
+
+//        for (Payment payment : payments) {
+//            var seats = seatReservedRepository.findSeatsByPaymentId(payment.getPaymentId());
+//            responses.add(payment.toPaymentResponseDTO(seats));
+//        }
+
+        return paymentRepository.findAll();
     }
 
     @Override
@@ -65,33 +93,43 @@ public class PaymentServiceImpl implements PaymentService {
         List<Invoice> dataList = new ArrayList<>();
         Payment payment = findById(id);
         Invoice invoice = payment.toInvoice();
-        dataList.add(invoice);  
+        dataList.add(invoice);
         JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(dataList);
         Map<String, Object> parameters = new HashMap();
         return JasperFillManager.fillReport(jasperReport, parameters, beanCollectionDataSource);
     }
 
     @Override
-    public Payment save(Payment payment) {
-        System.out.println(payment.toString());
-        if(payment.getAmount() <= 0 || payment.getStaff() == null || payment.getSchedule() == null || payment.getPaymentDate() == null)
+    public PaymentResponseDTO save(PaymentRequestDTO request) {
+        System.out.println(request.toString());
+        if(request.getAmount() <= 0 || request.getStaffId() > 0
+                || request.getScheduleId() > 0 || request.getPaymentDate() == null
+                || request.getSeatIds().isEmpty())
             throw new RuntimeException("Invalid Payment");
 
-        var schedule = scheduleRepository.findById(payment.getSchedule().getScheduleId());
-        var staff = staffRepository.findById(payment.getStaff().getStaffId());
-        var costumer = costumerRepository.findById(payment.getCostumer().getCostumerId());
+        // check seats if exist
+        var seats = seatRepository.findAllById(request.getSeatIds());
+        if(seats.isEmpty()) throw new RuntimeException("Seat not Available");
+
+        var payment = modelMapper.map(request, Payment.class);
+
+        var schedule = scheduleRepository.findById(request.getScheduleId());
+        var staff = staffRepository.findById(request.getStaffId());
+        var costumer = costumerRepository.findById(request.getCostumerId());
 
         var isEmpty = staff.isEmpty() || schedule.isEmpty() || costumer.isEmpty();
-        if(isEmpty){
-            throw new RuntimeException("Data is empty");
-        }
+        if(isEmpty) throw new RuntimeException("Data is empty");
 
         payment.setStaff(staff.get());
         payment.setSchedule(schedule.get());
         payment.setCostumer(costumer.get());
+        var seatReserved = payment.toSeatReserved(seats);
 
+        seatReservedRepository.save(seatReserved);
 
-        return paymentRepository.save(payment);
+        payment = paymentRepository.save(payment);
+
+        return payment.toPaymentResponseDTO(seats);
     }
 
     @Override

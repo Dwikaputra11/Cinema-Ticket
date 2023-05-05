@@ -14,5 +14,5 @@ public class PaymentRequestDTO {
     int scheduleId;
     int costumerId;
     int staffId;
-//    List<Seat> seats;
+    List<Integer> seatIds;
 }

@@ -1,7 +1,9 @@
 package com.spring.binar.challenge_5.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,9 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "payment", schema = "public")
 @Entity
+@Builder
 @AllArgsConstructor
 @ToString
-@Builder
 public class Payment implements Serializable {
 
     @Id
@@ -31,20 +33,39 @@ public class Payment implements Serializable {
     @Column(name = "amount")
     private int amount;
 
-    @OneToOne(targetEntity = Schedule.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = Schedule.class, cascade = CascadeType.MERGE)
     @JoinColumn(name = "schedule_id", referencedColumnName = "schedule_id")
     @ToString.Exclude
     private Schedule schedule;
 
-    @OneToOne(targetEntity = Costumer.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = Costumer.class, cascade = CascadeType.MERGE)
     @JoinColumn(name = "costumer_id", referencedColumnName = "costumer_id")
     @ToString.Exclude
     private Costumer costumer;
 
-    @OneToOne(targetEntity = Staff.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = Staff.class, cascade = CascadeType.MERGE)
     @JoinColumn(name = "staff_id", referencedColumnName = "staff_id")
     @ToString.Exclude
     private Staff staff;
+    public SeatReserved toSeatReserved(List<Seat> seats){
+        return SeatReserved.builder()
+                .seat(seats)
+                .payment(this)
+                .schedule(this.getSchedule())
+                .build();
+    }
+
+    public PaymentResponseDTO toPaymentResponseDTO(List<Seat> seats){
+        return PaymentResponseDTO.builder()
+                .seatsReserved(seats)
+                .paymentId(this.paymentId)
+                .amount(this.amount)
+                .staff(this.staff)
+                .paymentDate(this.paymentDate)
+                .costumer(this.costumer)
+                .schedule(this.getSchedule())
+                .build();
+    }
 
     public Invoice toInvoice(){
         return Invoice.builder()
