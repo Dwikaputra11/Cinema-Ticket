@@ -4,6 +4,17 @@ import com.spring.binar.challenge_5.dto.PaymentDTO;
 import com.spring.binar.challenge_5.models.Payment;
 import com.spring.binar.challenge_5.service.PaymentService;
 import com.spring.binar.challenge_5.utils.ResponseHandler;
+
+import jakarta.servlet.http.HttpServletResponse;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,6 +58,14 @@ public class PaymentController {
 
         return ResponseHandler.generateResponse(SUCCESS_RETRIEVE_MSG, HttpStatus.OK,data);
     }
+
+    @GetMapping("/payment/document/{id}")
+    public ResponseEntity<Object> getDocument(HttpServletResponse response, @PathVariable("id") int id) throws IOException, JRException {
+        
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "inline; filename=payment.pdf");
+        return ResponseEntity.ok().body(JasperExportManager.exportReportToPdf(paymentService.exportReport(id)));
+    }   
 
     @PostMapping("/payment")
     public ResponseEntity<Object> save(@RequestBody PaymentDTO paymentDTO){

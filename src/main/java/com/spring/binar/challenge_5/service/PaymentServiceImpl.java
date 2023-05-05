@@ -1,12 +1,29 @@
 package com.spring.binar.challenge_5.service;
 
-import com.spring.binar.challenge_5.dto.PaymentDTO;
+import com.spring.binar.challenge_5.models.Invoice;
 import com.spring.binar.challenge_5.models.Payment;
 import com.spring.binar.challenge_5.repos.PaymentRepository;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 @Service
 public class PaymentServiceImpl implements PaymentService{
@@ -29,6 +46,19 @@ public class PaymentServiceImpl implements PaymentService{
 
         if(data.isEmpty()) throw new RuntimeException("No Payment found");
         return data.get();
+    }
+
+    @Override
+    public JasperPrint exportReport(int id) throws JRException, FileNotFoundException {
+        String file = ResourceUtils.getFile("classpath:challenge5payment.jrxml").getAbsolutePath();
+        JasperReport jasperReport = JasperCompileManager.compileReport(file);
+        List<Payment> dataList = new ArrayList<>();
+        Payment payment = findById(id);
+        Invoice invoice = payment.toInvoice();
+        dataList.add(payment);  
+        JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(dataList);
+        Map<String, Object> parameters = new HashMap();
+        return JasperFillManager.fillReport(jasperReport, parameters, beanCollectionDataSource);
     }
 
     @Override

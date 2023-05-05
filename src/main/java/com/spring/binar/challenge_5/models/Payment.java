@@ -14,6 +14,7 @@ import java.util.Date;
 @Entity
 @AllArgsConstructor
 @ToString
+@Builder
 public class Payment implements Serializable {
 
     @Id
@@ -43,4 +44,11 @@ public class Payment implements Serializable {
     @ToString.Exclude
     private Staff staff;
 
+    public Invoice toInvoice(){
+        return Invoice.builder()
+        .costumerId(this.costumer.getCostumerId())
+        .paymentId(this.paymentId)
+        
+        .build();
+    }
 }
