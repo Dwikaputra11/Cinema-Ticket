@@ -1,12 +1,13 @@
 package com.spring.binar.challenge_5.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Setter
 @Getter
@@ -43,5 +44,9 @@ public class Payment implements Serializable {
     @JoinColumn(name = "staff_id", referencedColumnName = "staff_id")
     @ToString.Exclude
     private Staff staff;
+
+//    @OneToMany(mappedBy = "payment")
+//    @JsonManagedReference
+//    private List<Seat> seats;
 
 }

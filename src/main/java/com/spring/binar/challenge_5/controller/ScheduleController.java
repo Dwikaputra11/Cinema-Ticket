@@ -1,8 +1,13 @@
 package com.spring.binar.challenge_5.controller;
 
+import com.spring.binar.challenge_5.dto.ScheduleRequestDTO;
 import com.spring.binar.challenge_5.models.Schedule;
+import com.spring.binar.challenge_5.repos.StudioRepository;
+import com.spring.binar.challenge_5.service.FilmService;
 import com.spring.binar.challenge_5.service.ScheduleService;
+import com.spring.binar.challenge_5.service.StudioService;
 import com.spring.binar.challenge_5.utils.ResponseHandler;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class ScheduleController {
 
+    @Autowired
+    ModelMapper modelMapper;
     private final ScheduleService scheduleService;
     private static final String SUCCESS_RETRIEVE_MSG = "Successfully retrieved data!";
     private static final String SUCCESS_EDIT_MSG = "Successfully edit data!";
@@ -45,14 +52,16 @@ public class ScheduleController {
     }
 
     @PostMapping("/schedule")
-    public ResponseEntity<Object> save(@RequestBody Schedule schedule){
-        var data = scheduleService.save(schedule);
+    public ResponseEntity<Object> save(@RequestBody ScheduleRequestDTO schedule){
+        var map = modelMapper.map(schedule, Schedule.class);
+        var data = scheduleService.save(map);
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK, data);
     }
 
     @PutMapping("/schedule")
-    public ResponseEntity<Object> update(@RequestBody Schedule schedule){
-        var data = scheduleService.update(schedule);
+    public ResponseEntity<Object> update(@RequestBody ScheduleRequestDTO schedule){
+        var map = modelMapper.map(schedule, Schedule.class);
+        var data = scheduleService.update(map);
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK, data);
     }
 
