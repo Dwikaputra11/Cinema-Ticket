@@ -1,5 +1,6 @@
 package com.spring.binar.challenge_5.service;
 
+import com.spring.binar.challenge_5.dto.ScheduleRequestDTO;
 import com.spring.binar.challenge_5.models.Schedule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,7 +10,7 @@ public interface ScheduleService {
 
     Schedule findById(int id);
 
-    Schedule save(Schedule schedule);
+    ScheduleRequestDTO save(Schedule schedule);
 
     Schedule update(Schedule updatedSchedule);
 

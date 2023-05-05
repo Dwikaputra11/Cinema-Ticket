@@ -1,17 +1,14 @@
 package com.spring.binar.challenge_5.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
 import java.io.Serializable;
 
-@Entity
-@Setter
-@Getter
+@Getter @Setter
 @NoArgsConstructor
-@ToString
+@Entity
 @Table(name = "seat",schema = "public")
 public class Seat implements Serializable {
     @Id
@@ -25,7 +22,8 @@ public class Seat implements Serializable {
     @Column(name = "number")
     private byte number;
 
-    @OneToOne(targetEntity = Studio.class,cascade = CascadeType.MERGE)
+    @JsonBackReference
+    @ManyToOne(targetEntity = Studio.class,cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "studio_id", referencedColumnName = "studio_id", nullable = false)
     private Studio studio;
 }
