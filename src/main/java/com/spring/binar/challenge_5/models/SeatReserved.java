@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
+@Entity
 @Table(name = "seat_reserved", schema = "public")
 public class SeatReserved {
 
@@ -17,12 +18,12 @@ public class SeatReserved {
     @JoinColumn(name = "seat_id", referencedColumnName = "seat_id")
     private int seatId;
 
-    @Column(name = "payment_id", nullable = false)
+    @JoinColumn(name = "payment_id", referencedColumnName = "payment_id", nullable = false)
     @OneToOne(targetEntity = Payment.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private int paymentId;
+    private Payment payment;
 
-    @Column(name = "studio_id", nullable = false)
-    @OneToOne(targetEntity = Studio.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private int studioId;
+    @JoinColumn(name = "schedule_id", referencedColumnName = "schedule_id", nullable = false)
+    @OneToOne(targetEntity = Schedule.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private Schedule schedule;
 
 }

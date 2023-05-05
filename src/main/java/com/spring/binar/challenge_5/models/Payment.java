@@ -50,7 +50,13 @@ public class Payment implements Serializable {
         return Invoice.builder()
         .costumerId(this.costumer.getCostumerId())
         .paymentId(this.paymentId)
-        
+        .paymentDate(this.paymentDate)
+        .amount(amount)
+        .fromDate(this.schedule.getFromDate())
+        .toDate(this.schedule.getToDate())
+        .title(this.schedule.getFilm().getTitle())
+        .studioName(this.schedule.getStudio().getName())
+        .username(this.costumer.getUsername())
         .build();
     }
 }

@@ -12,6 +12,12 @@ public class Invoice {
     private int paymentId;
     private Date paymentDate;
     private int amount;
-    private 
+    private Long fromDate;
+    private Long toDate;
+    private String title;
+    private String studioName;
+    // private char row;
+    // private byte number;
+    private String username;
     
 }

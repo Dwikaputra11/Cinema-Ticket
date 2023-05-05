@@ -6,7 +6,7 @@
 	<queryString language="SQL">
 		<![CDATA[SELECT * FROM payment;]]>
 	</queryString>
-	<field name="payment_id" class="java.lang.Integer">
+	<field name="paymentId" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="payment_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="payment_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
@@ -16,24 +16,23 @@
 		<property name="com.jaspersoft.studio.field.label" value="amount"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
 	</field>
-	<field name="payment_date" class="java.sql.Timestamp">
+	<field name="paymentDate" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.name" value="payment_date"/>
 		<property name="com.jaspersoft.studio.field.label" value="payment_date"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
 	</field>
-	<field name="costumer_id" class="java.lang.Integer">
+	<field name="costumerId" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="costumer_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="costumer_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
 	</field>
-	<field name="schedule_id" class="java.lang.Integer">
+	<field name="title" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="schedule_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="schedule_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
 	</field>
-	<background>
-		<band splitType="Stretch"/>
-	</background>
+	<field name="studioName" class="java.lang.String"/>
+	<field name="username" class="java.lang.String"/>
 	<title>
 		<band height="81" splitType="Stretch">
 			<staticText>
@@ -56,7 +55,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="150" splitType="Stretch">
+		<band height="280" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
 				<reportElement x="0" y="19" width="120" height="31" uuid="1853f854-34c1-418b-90e5-913fd5551803"/>
@@ -70,7 +69,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{payment_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{paymentId}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="60" width="120" height="31" uuid="77bd6c75-17a2-4eae-a336-8886da33a671"/>
@@ -84,7 +83,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{payment_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{paymentDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="540" y="19" width="120" height="31" uuid="a22e4f65-2d34-4fb5-b04b-5e5e6d841cca"/>
@@ -98,17 +97,50 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{costumer_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{costumerId}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="540" y="60" width="120" height="31" uuid="b571ca24-4165-4590-a3d7-68c31dd690ca"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Username :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="670" y="60" width="111" height="31" uuid="62515f6c-592f-4b91-874a-303df2002f9b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="130" width="180" height="70" uuid="b4579f22-0473-4384-b681-146f467c3d85"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="50"/>
+				</textElement>
+				<text><![CDATA[Movie :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="200" y="150" width="581" height="31" uuid="3fb3da6e-5b9f-4b1a-bfc9-8822efd069a2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="210" width="180" height="70" uuid="9586f496-8a94-4833-adaa-27e5db0e9fc3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="50"/>
+				</textElement>
+				<text><![CDATA[Studio : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="200" y="220" width="300" height="51" uuid="4fc45c40-7722-46e7-accc-61bfb15aac96"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{studioName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>

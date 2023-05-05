@@ -14,5 +14,5 @@ public interface SeatRepository extends JpaRepository <Seat, Integer>{
     List<Seat> findSeatAvailable( Integer scheduleId);
 
 //    @Query("SELECT * FROM Seat WHERE studioId = ?1")
-    List<Seat> findAllByStudioStudioId(Integer studioId);
+    // List<Seat> findAllByStudioStudioId(Integer studioId);
 }

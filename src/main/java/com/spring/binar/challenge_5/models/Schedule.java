@@ -31,11 +31,11 @@ public class Schedule implements Serializable {
     private int price;
 
     @OneToOne(targetEntity = Studio.class,cascade = CascadeType.MERGE)
-    @JoinColumn(name = "studio_id", referencedColumnName = "studio_id", nullable = false)
+    @JoinColumn(name = "studio_id_fk", referencedColumnName = "studio_id", nullable = false)
     private Studio studio;
 
     @OneToOne(targetEntity = Film.class, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "film_id", referencedColumnName = "film_id", nullable = false)
+    @JoinColumn(name = "film_id_fk", referencedColumnName = "film_id", nullable = false)
     private Film film;
 
     public ScheduleResponseDTO convertToResponse(){

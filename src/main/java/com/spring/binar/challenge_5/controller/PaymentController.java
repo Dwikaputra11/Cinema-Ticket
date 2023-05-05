@@ -65,7 +65,8 @@ public class PaymentController {
         
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "inline; filename=payment.pdf");
-        return ResponseEntity.ok().body(JasperExportManager.exportReportToPdf(paymentService.exportReport(id)));
+        JasperExportManager.exportReportToPdfStream(paymentService.exportReport(id), response.getOutputStream());
+        return ResponseEntity.ok().body("ok");
     }   
 
     @PostMapping("/payment")

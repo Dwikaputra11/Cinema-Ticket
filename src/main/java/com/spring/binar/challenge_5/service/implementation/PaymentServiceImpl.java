@@ -62,10 +62,10 @@ public class PaymentServiceImpl implements PaymentService {
     public JasperPrint exportReport(int id) throws JRException, FileNotFoundException {
         String file = ResourceUtils.getFile("classpath:challenge5payment.jrxml").getAbsolutePath();
         JasperReport jasperReport = JasperCompileManager.compileReport(file);
-        List<Payment> dataList = new ArrayList<>();
+        List<Invoice> dataList = new ArrayList<>();
         Payment payment = findById(id);
         Invoice invoice = payment.toInvoice();
-        dataList.add(payment);  
+        dataList.add(invoice);  
         JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(dataList);
         Map<String, Object> parameters = new HashMap();
         return JasperFillManager.fillReport(jasperReport, parameters, beanCollectionDataSource);
