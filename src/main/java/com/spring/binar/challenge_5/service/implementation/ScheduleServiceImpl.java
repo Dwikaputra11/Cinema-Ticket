@@ -1,14 +1,15 @@
-package com.spring.binar.challenge_5.service;
+package com.spring.binar.challenge_5.service.implementation;
 
 import com.spring.binar.challenge_5.models.Schedule;
 import com.spring.binar.challenge_5.repos.ScheduleRepository;
+import com.spring.binar.challenge_5.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ScheduleServiceImpl implements ScheduleService{
+public class ScheduleServiceImpl implements ScheduleService {
 
     private ScheduleRepository repository;
 

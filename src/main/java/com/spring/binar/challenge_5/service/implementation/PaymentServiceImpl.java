@@ -1,7 +1,8 @@
-package com.spring.binar.challenge_5.service;
+package com.spring.binar.challenge_5.service.implementation;
 
 import com.spring.binar.challenge_5.models.Invoice;
 import com.spring.binar.challenge_5.models.Payment;
+import com.spring.binar.challenge_5.repos.CostumerRepository;
 import com.spring.binar.challenge_5.repos.PaymentRepository;
 
 import net.sf.jasperreports.engine.JRException;
@@ -19,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.binar.challenge_5.repos.ScheduleRepository;
+import com.spring.binar.challenge_5.repos.StaffRepository;
+import com.spring.binar.challenge_5.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,13 +30,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 @Service
-public class PaymentServiceImpl implements PaymentService{
+public class PaymentServiceImpl implements PaymentService {
 
     private PaymentRepository paymentRepository;
+    private ScheduleRepository scheduleRepository;
+    private CostumerRepository costumerRepository;
+    private StaffRepository staffRepository;
 
     @Autowired
-    public PaymentServiceImpl(PaymentRepository paymentRepository) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, ScheduleRepository scheduleRepository, CostumerRepository costumerRepository, StaffRepository staffRepository) {
         this.paymentRepository = paymentRepository;
+        this.scheduleRepository = scheduleRepository;
+        this.costumerRepository = costumerRepository;
+        this.staffRepository =staffRepository;
     }
 
     @Override
@@ -66,6 +76,20 @@ public class PaymentServiceImpl implements PaymentService{
         System.out.println(payment.toString());
         if(payment.getAmount() <= 0 || payment.getStaff() == null || payment.getSchedule() == null || payment.getPaymentDate() == null)
             throw new RuntimeException("Invalid Payment");
+
+        var schedule = scheduleRepository.findById(payment.getSchedule().getScheduleId());
+        var staff = staffRepository.findById(payment.getStaff().getStaffId());
+        var costumer = costumerRepository.findById(payment.getCostumer().getCostumerId());
+
+        var isEmpty = staff.isEmpty() || schedule.isEmpty() || costumer.isEmpty();
+        if(isEmpty){
+            throw new RuntimeException("Data is empty");
+        }
+
+        payment.setStaff(staff.get());
+        payment.setSchedule(schedule.get());
+        payment.setCostumer(costumer.get());
+
 
         return paymentRepository.save(payment);
     }

@@ -1,6 +1,7 @@
 package com.spring.binar.challenge_5.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,17 +30,17 @@ public class Payment implements Serializable {
     @Column(name = "amount")
     private int amount;
 
-    @OneToOne(targetEntity = Schedule.class, cascade = CascadeType.MERGE)
+    @OneToOne(targetEntity = Schedule.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", referencedColumnName = "schedule_id")
     @ToString.Exclude
     private Schedule schedule;
 
-    @OneToOne(targetEntity = Costumer.class, cascade = CascadeType.MERGE)
+    @OneToOne(targetEntity = Costumer.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "costumer_id", referencedColumnName = "costumer_id")
     @ToString.Exclude
     private Costumer costumer;
 
-    @OneToOne(targetEntity = Staff.class, cascade = CascadeType.MERGE)
+    @OneToOne(targetEntity = Staff.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "staff_id", referencedColumnName = "staff_id")
     @ToString.Exclude
     private Staff staff;

@@ -20,6 +20,9 @@ public class Studio implements Serializable {
     @Column(name = "studio_id", nullable = false, unique = true)
     private int studioId;
 
+    @Column(name = "capacity")
+    private int capacity;
+
     @Column(name = "name")
     private String name;
 

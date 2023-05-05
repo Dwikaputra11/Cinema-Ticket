@@ -1,7 +1,8 @@
-package com.spring.binar.challenge_5.service;
+package com.spring.binar.challenge_5.service.implementation;
 
 import com.spring.binar.challenge_5.models.Costumer;
 import com.spring.binar.challenge_5.repos.CostumerRepository;
+import com.spring.binar.challenge_5.service.CostumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Calendar;
 
 @Service
-public class CostumerServiceImpl implements CostumerService{
+public class CostumerServiceImpl implements CostumerService {
 
     private final CostumerRepository costumerRepository;
     @Autowired
