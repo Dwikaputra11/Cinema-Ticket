@@ -18,15 +18,15 @@ public interface PaymentService {
 
     Page<Payment> findAll(Pageable pageable);
 
-    List<Payment> findAll();
+    List<PaymentResponseDTO> findAll();
 
-    Payment findById(int id);
+    PaymentResponseDTO findById(int id);
 
     JasperPrint exportReport(int id) throws JRException, IOException;
 
     PaymentResponseDTO save(PaymentRequestDTO payment);
 
-    Payment update(Payment updatedPayment);
+    PaymentResponseDTO update(PaymentRequestDTO updatedPayment);
 
     void delete(int id);
 }

@@ -47,7 +47,7 @@ public class PaymentController {
 //            @RequestParam(defaultValue ="0") int page,
 //            @RequestParam(defaultValue ="10") int size
     ){
-        List<Payment> payments;
+        List<PaymentResponseDTO> payments;
 //        Pageable pageable = PageRequest.of(page, size);
         payments = paymentService.findAll();
 
@@ -73,13 +73,12 @@ public class PaymentController {
 
     @PostMapping("/payment")
     public ResponseEntity<Object> save(@RequestBody PaymentRequestDTO paymentRequestDTO){
-//        Payment payment = modelMapper.map(paymentRequestDTO, Payment.class);
         var data = paymentService.save(paymentRequestDTO);
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.CREATED, data);
     }
 
     @PutMapping("/payment")
-    public ResponseEntity<Object> update(@RequestBody Payment payment){
+    public ResponseEntity<Object> update(@RequestBody PaymentRequestDTO payment){
         var data = paymentService.update(payment);
 
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK, data);

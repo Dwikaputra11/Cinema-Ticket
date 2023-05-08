@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,12 +48,16 @@ public class Payment implements Serializable {
     @JoinColumn(name = "staff_id", referencedColumnName = "staff_id")
     @ToString.Exclude
     private Staff staff;
-    public SeatReserved toSeatReserved(List<Seat> seats){
-        return SeatReserved.builder()
-                .seat(seats)
-                .payment(this)
-                .schedule(this.getSchedule())
-                .build();
+    public List<SeatReserved> toSeatReserved(List<Seat> seats){
+        List<SeatReserved> seatReserveds= new ArrayList<>();
+        for(Seat seat: seats){
+            seatReserveds.add(SeatReserved.builder()
+                            .seat(seat)
+                            .payment(this)
+                            .schedule(this.getSchedule())
+                            .build());
+        }
+        return seatReserveds;
     }
 
     public PaymentResponseDTO toPaymentResponseDTO(List<Seat> seats){

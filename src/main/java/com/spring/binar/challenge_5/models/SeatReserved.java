@@ -1,12 +1,9 @@
 package com.spring.binar.challenge_5.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,23 +12,24 @@ import java.util.List;
 @Table(name = "seat_reserved", schema = "public")
 @Entity
 @Builder
+@ToString
 public class SeatReserved implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(targetEntity = Seat.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    @JoinColumn(name = "seat_id", referencedColumnName = "seat_id")
-    private List<Seat> seat;
+    @OneToOne(targetEntity = Seat.class, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "seat_id", referencedColumnName ="seat_id")
+    private Seat seat;
 
     @JoinColumn(name = "payment_id",referencedColumnName = "payment_id",nullable = false)
-    @OneToOne(targetEntity = Payment.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = Payment.class, cascade = CascadeType.MERGE)
     private Payment payment;
 
     @JoinColumn(name = "schedule_id",referencedColumnName = "schedule_id",nullable = false)
-    @OneToOne(targetEntity = Schedule.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = Schedule.class, cascade = CascadeType.MERGE)
     private Schedule schedule;
+
 
 }

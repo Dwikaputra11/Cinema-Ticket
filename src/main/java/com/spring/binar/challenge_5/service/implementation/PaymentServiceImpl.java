@@ -4,20 +4,18 @@ import com.spring.binar.challenge_5.dto.PaymentRequestDTO;
 import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
 import com.spring.binar.challenge_5.models.Invoice;
 import com.spring.binar.challenge_5.models.Payment;
-import com.spring.binar.challenge_5.models.SeatReserved;
+import com.spring.binar.challenge_5.models.Seat;
 import com.spring.binar.challenge_5.repos.*;
 import com.spring.binar.challenge_5.repos.CostumerRepository;
 import com.spring.binar.challenge_5.repos.PaymentRepository;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,9 +31,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -54,7 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
         this.paymentRepository = paymentRepository;
         this.scheduleRepository = scheduleRepository;
         this.costumerRepository = costumerRepository;
-        this.staffRepository =staffRepository;
+        this.staffRepository = staffRepository;
         this.seatReservedRepository = seatReservedRepository;
         this.seatRepository = seatRepository;
     }
@@ -65,25 +60,32 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<Payment> findAll() {
+    public List<PaymentResponseDTO> findAll() {
         var payments = paymentRepository.findAll();
-        var responses = new ArrayList<PaymentResponseDTO>();
 
+        if(payments.isEmpty()) return new ArrayList<>();
 
-//        for (Payment payment : payments) {
-//            var seats = seatReservedRepository.findSeatsByPaymentId(payment.getPaymentId());
-//            responses.add(payment.toPaymentResponseDTO(seats));
-//        }
+        var responses = payments.stream().map(payment -> {
+            var seatsReserved = seatReservedRepository.findSeatsByPaymentPaymentId(payment.getPaymentId());
+            System.out.println("seat reserved: " + seatsReserved);
+            var seats = seatsReserved.stream().map(it -> seatRepository.findById(it.getSeat().getSeatId()).orElseThrow()).toList();
+            System.out.println("seats " + seats);
+            return payment.toPaymentResponseDTO(seats);
+        }).toList();
 
-        return paymentRepository.findAll();
+        System.out.println("Response: " + responses);
+
+        return responses;
     }
 
     @Override
-    public Payment findById(int id) {
-        var data = paymentRepository.findById(id);
+    public PaymentResponseDTO findById(int id) {
+        var payment = paymentRepository.findById(id).orElseThrow();
 
-        if(data.isEmpty()) throw new RuntimeException("No Payment found");
-        return data.get();
+        var seatReserved = seatReservedRepository.findSeatsByPaymentPaymentId(payment.getPaymentId());
+        var seats = seatReserved.stream().map(it -> seatRepository.findById(it.getSeat().getSeatId()).orElseThrow()).toList();
+
+        return payment.toPaymentResponseDTO(seats);
     }
 
     @Override
@@ -91,7 +93,7 @@ public class PaymentServiceImpl implements PaymentService {
         String file = ResourceUtils.getFile("classpath:challenge5payment.jrxml").getAbsolutePath();
         JasperReport jasperReport = JasperCompileManager.compileReport(file);
         List<Invoice> dataList = new ArrayList<>();
-        Payment payment = findById(id);
+        Payment payment = paymentRepository.findById(id).orElseThrow();
         Invoice invoice = payment.toInvoice();
         dataList.add(invoice);
         JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(dataList);
@@ -102,16 +104,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponseDTO save(PaymentRequestDTO request) {
         System.out.println(request.toString());
-        if(request.getAmount() <= 0 || request.getStaffId() > 0
-                || request.getScheduleId() > 0 || request.getPaymentDate() == null
-                || request.getSeatIds().isEmpty())
+        if(request.getAmount() <= 0 || request.getStaffId() <= 0
+                || request.getScheduleId() <= 0 || request.getSeatIds().isEmpty())
             throw new RuntimeException("Invalid Payment");
 
         // check seats if exist
-        var seats = seatRepository.findAllById(request.getSeatIds());
+        List<Seat> seats = seatRepository.findAllById(request.getSeatIds());
+        System.out.println("seats : " + seats);
         if(seats.isEmpty()) throw new RuntimeException("Seat not Available");
-
-        var payment = modelMapper.map(request, Payment.class);
 
         var schedule = scheduleRepository.findById(request.getScheduleId());
         var staff = staffRepository.findById(request.getStaffId());
@@ -120,32 +120,55 @@ public class PaymentServiceImpl implements PaymentService {
         var isEmpty = staff.isEmpty() || schedule.isEmpty() || costumer.isEmpty();
         if(isEmpty) throw new RuntimeException("Data is empty");
 
+        var payment = new Payment();
+
         payment.setStaff(staff.get());
         payment.setSchedule(schedule.get());
         payment.setCostumer(costumer.get());
-        var seatReserved = payment.toSeatReserved(seats);
-
-        seatReservedRepository.save(seatReserved);
+        payment.setPaymentDate(request.getPaymentDate());
+        payment.setAmount(request.getAmount());
 
         payment = paymentRepository.save(payment);
+
+        var seatReserved = payment.toSeatReserved(seats);
+
+        seatReserved.forEach(it -> System.out.println(it.toString()));
+
+        // save each seat to db
+        seatReserved.forEach(seatReservedRepository::save);
+
 
         return payment.toPaymentResponseDTO(seats);
     }
 
     @Override
-    public Payment update(Payment updatedPayment) {
-        var result = paymentRepository.findById(updatedPayment.getPaymentId());
+    public PaymentResponseDTO update(PaymentRequestDTO updatedPayment) {
+        var payment = paymentRepository.findById(updatedPayment.getPaymentId()).orElseThrow();
 
-        if(result.isEmpty()) throw new RuntimeException("No Schedule found");
+        List<Seat> seats = seatRepository.findAllById(updatedPayment.getSeatIds());
+        System.out.println("seats : " + seats);
+        if(seats.isEmpty()) throw new RuntimeException("Seat not Available");
 
-        var schedule = result.get();
-        schedule.setSchedule(updatedPayment.getSchedule());
-        schedule.setCostumer(updatedPayment.getCostumer());
-        schedule.setStaff(updatedPayment.getStaff());
-        schedule.setAmount(updatedPayment.getAmount());
-        schedule.setPaymentDate(updatedPayment.getPaymentDate());
+        var schedule = scheduleRepository.findById(updatedPayment.getScheduleId());
+        var staff = staffRepository.findById(updatedPayment.getStaffId());
+        var costumer = costumerRepository.findById(updatedPayment.getCostumerId());
 
-        return paymentRepository.save(schedule);
+        if(schedule.isEmpty() || staff.isEmpty() || costumer.isEmpty()) throw new RuntimeException("No Item found");
+
+        payment.setSchedule(schedule.get());
+        payment.setStaff(staff.get());
+        payment.setCostumer(costumer.get());
+        payment.setPaymentDate(updatedPayment.getPaymentDate());
+        payment.setAmount(updatedPayment.getAmount());
+
+        payment = paymentRepository.save(payment);
+
+        seatReservedRepository.removeAllByPaymentPaymentId(payment.getPaymentId());
+        var seatReserved = payment.toSeatReserved(seats);
+        seatReservedRepository.saveAll(seatReserved);
+
+
+        return payment.toPaymentResponseDTO(seats);
     }
 
     @Override

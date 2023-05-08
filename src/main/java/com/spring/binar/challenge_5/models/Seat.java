@@ -12,6 +12,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Table(name = "seat",schema = "public")
 public class Seat implements Serializable {
     @Id
@@ -26,12 +27,12 @@ public class Seat implements Serializable {
     private byte number;
 
     @JsonBackReference
-    @OneToOne(targetEntity = Studio.class,cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = Studio.class,cascade = CascadeType.MERGE)
     @JoinColumn(name = "studio_id", referencedColumnName = "studio_id", nullable = false)
     private Studio studio;
 
-    @JsonBackReference
-    @ManyToOne(targetEntity = SeatReserved.class, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "id", referencedColumnName = "id")
-    private SeatReserved seatReserved;
+//    @JsonBackReference
+//    @ManyToOne(targetEntity = SeatReserved.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "id", referencedColumnName = "id")
+//    private SeatReserved seatReserved;
 }
