@@ -1,4 +1,4 @@
-package com.spring.binar.challenge_5.controller;
+package com.spring.binar.challenge_5.controller.rest;
 
 import com.spring.binar.challenge_5.dto.PaymentRequestDTO;
 import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
