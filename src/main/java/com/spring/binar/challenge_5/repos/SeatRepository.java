@@ -23,4 +23,10 @@ public interface SeatRepository extends JpaRepository <Seat, Integer>{
 //    @Modifying
 //    @Query(value = "SELECT s.seat_id, s.row, s.number FROM Seat s LEFT JOIN SeatReserved sv ON s.seat_id = sv.seat_id where sv.paymentId = :paymentId")
 //    List<Seat> findSeatsByPaymentId(@Param("paymentId") Integer paymentId);
+
+    @Query(value = "select NEW com.spring.binar.challenge_5.models.Seat(s.seatId, s.row, s.number) from Seat s " +
+            "where s.seatId NOT IN (SELECT seat.seatId from SeatReserved where schedule.scheduleId = ?1) and s.studio.studioId = ?2")
+    List<Seat> findAvailableSeats(Integer scheduleId, Integer studioId);
+
+    List<Seat> findByStudioStudioId(Integer studioId);
 }

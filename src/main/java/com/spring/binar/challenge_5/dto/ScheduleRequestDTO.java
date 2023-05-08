@@ -1,17 +1,17 @@
 package com.spring.binar.challenge_5.dto;
 
-import com.spring.binar.challenge_5.models.Seat;
+import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
+import java.io.Serializable;
 
 @Data
-public class ScheduleRequestDTO {
+@Builder
+public class ScheduleRequestDTO implements Serializable {
     private int scheduleId;
     private long fromDate;
     private long toDate;
     private int price;
     private int studioId;
     private int filmId;
-    private List<Seat> seats;
 }

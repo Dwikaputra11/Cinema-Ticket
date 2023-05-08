@@ -1,6 +1,7 @@
 package com.spring.binar.challenge_5.controller;
 
 import com.spring.binar.challenge_5.dto.ScheduleRequestDTO;
+import com.spring.binar.challenge_5.dto.ScheduleResponseDTO;
 import com.spring.binar.challenge_5.models.Schedule;
 import com.spring.binar.challenge_5.repos.StudioRepository;
 import com.spring.binar.challenge_5.service.FilmService;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -36,11 +39,11 @@ public class ScheduleController {
             @RequestParam(defaultValue ="0") int page,
             @RequestParam(defaultValue ="10") int size
     ){
-        Page<Schedule> schedules;
+        List<ScheduleResponseDTO> schedules;
         Pageable pageable = PageRequest.of(page, size);
-        schedules = scheduleService.findAll(pageable);
+        schedules = scheduleService.findAll();
 
-        return ResponseHandler.generatePagingResponse(SUCCESS_RETRIEVE_MSG, HttpStatus.OK,schedules);
+        return ResponseHandler.generateResponse(SUCCESS_RETRIEVE_MSG, HttpStatus.OK,schedules);
     }
 
     @GetMapping("/schedule/{id}")
@@ -53,15 +56,14 @@ public class ScheduleController {
 
     @PostMapping("/schedule")
     public ResponseEntity<Object> save(@RequestBody ScheduleRequestDTO schedule){
-        var map = modelMapper.map(schedule, Schedule.class);
-        var data = scheduleService.save(map);
+        var data = scheduleService.save(schedule);
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK, data);
     }
 
     @PutMapping("/schedule")
     public ResponseEntity<Object> update(@RequestBody ScheduleRequestDTO schedule){
-        var map = modelMapper.map(schedule, Schedule.class);
-        var data = scheduleService.update(map);
+//        var map = modelMapper.map(schedule, Schedule.class);
+        var data = scheduleService.update(schedule);
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK, data);
     }
 

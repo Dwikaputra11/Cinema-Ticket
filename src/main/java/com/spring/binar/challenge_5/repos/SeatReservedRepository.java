@@ -16,9 +16,7 @@ public interface SeatReservedRepository extends JpaRepository<SeatReserved, Inte
 //    @Query("SELECT s.seat_id, s.row, s.number FROM Seat s LEFT JOIN SeatReserved sv ON s.seat_id = sv.seat_id where sv.paymentId = ?1")
 //    List<Seat> findSeatsByPaymentId(Integer paymentId);
     
-    @Query(value = "select s.seatId, s.number, s.row, s.studio.studioId from Seat s " +
-            "where s.seatId NOT IN (SELECT seat.seatId from SeatReserved where schedule.scheduleId = ?1) and s.studio.studioId = ?2")
-    List<Seat> findAvailableSeats(Integer scheduleId, Integer studioId);
+
 
     List<SeatReserved> findSeatsByPaymentPaymentId(Integer paymentId);
 

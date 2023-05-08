@@ -26,6 +26,12 @@ public class Seat implements Serializable {
     @Column(name = "number")
     private byte number;
 
+    public Seat(int seatId, char row, byte number) {
+        this.seatId = seatId;
+        this.row = row;
+        this.number = number;
+    }
+
     @JsonBackReference
     @OneToOne(targetEntity = Studio.class,cascade = CascadeType.MERGE)
     @JoinColumn(name = "studio_id", referencedColumnName = "studio_id", nullable = false)

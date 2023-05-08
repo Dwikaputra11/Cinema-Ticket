@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Setter @Getter
 @NoArgsConstructor
@@ -38,14 +39,16 @@ public class Schedule implements Serializable {
     @JoinColumn(name = "film_id", referencedColumnName = "film_id", nullable = false)
     private Film film;
 
-//    public ScheduleResponseDTO convertToResponse(){
-//        return ScheduleResponseDTO.builder()
-//                .film(this.film)
-//                .fromDate(this.fromDate)
-//                .price(this.price)
-//                .scheduleId(this.scheduleId)
-//                .toDate(this.toDate)
-//                .build();
-//    }
+    public ScheduleResponseDTO convertToResponse(List<Seat> seats){
+        return ScheduleResponseDTO.builder()
+                .film(this.film)
+                .studio(this.studio)
+                .fromDate(this.fromDate)
+                .price(this.price)
+                .scheduleId(this.scheduleId)
+                .toDate(this.toDate)
+                .availableSeats(seats)
+                .build();
+    }
 
 }
