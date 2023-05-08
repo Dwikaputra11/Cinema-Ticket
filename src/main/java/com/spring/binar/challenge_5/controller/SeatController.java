@@ -1,12 +1,7 @@
 package com.spring.binar.challenge_5.controller;
 
-import com.spring.binar.challenge_5.models.Film;
-import com.spring.binar.challenge_5.models.Schedule;
 import com.spring.binar.challenge_5.models.Seat;
-import com.spring.binar.challenge_5.models.Staff;
 import com.spring.binar.challenge_5.service.SeatService;
-import com.spring.binar.challenge_5.service.StaffService;
-import com.spring.binar.challenge_5.service.StudioService;
 import com.spring.binar.challenge_5.utils.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

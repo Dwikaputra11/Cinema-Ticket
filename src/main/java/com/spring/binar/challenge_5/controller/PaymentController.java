@@ -5,26 +5,16 @@ import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
 import com.spring.binar.challenge_5.models.Payment;
 import com.spring.binar.challenge_5.service.PaymentService;
 import com.spring.binar.challenge_5.utils.ResponseHandler;
-
 import jakarta.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController

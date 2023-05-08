@@ -4,8 +4,6 @@ import com.spring.binar.challenge_5.models.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 //    @Query(value = "select p.payment_id, p.costumer_id, p.schedule_id, p.payment_date, p.amount ," +

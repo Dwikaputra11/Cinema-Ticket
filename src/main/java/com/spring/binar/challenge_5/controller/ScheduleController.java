@@ -2,15 +2,10 @@ package com.spring.binar.challenge_5.controller;
 
 import com.spring.binar.challenge_5.dto.ScheduleRequestDTO;
 import com.spring.binar.challenge_5.dto.ScheduleResponseDTO;
-import com.spring.binar.challenge_5.models.Schedule;
-import com.spring.binar.challenge_5.repos.StudioRepository;
-import com.spring.binar.challenge_5.service.FilmService;
 import com.spring.binar.challenge_5.service.ScheduleService;
-import com.spring.binar.challenge_5.service.StudioService;
 import com.spring.binar.challenge_5.utils.ResponseHandler;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

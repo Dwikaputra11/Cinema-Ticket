@@ -1,8 +1,6 @@
 package com.spring.binar.challenge_5.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
 import jakarta.persistence.*;
 import lombok.*;

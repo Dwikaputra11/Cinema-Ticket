@@ -90,53 +90,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         return result.convertToResponse(seats);
     }
 
-
-
-//    @Override
-//    public ScheduleRequestDTO save(Schedule schedule) {
-//        System.out.println(schedule.toString());
-//        if(schedule.getPrice() <= 0 || schedule.getFromDate() > 0 || schedule.getToDate() > 0
-//                || schedule.getStudio() == null || schedule.getFilm() == null)
-//            throw new RuntimeException("Data not valid");
-//
-////        var film = filmRepository.findById(schedule.getFilm().getFilmId());
-////        var studio = studioRepository.findById(schedule.getStudio().getStudioId());
-//        var seats = seatRepository.findAllByStudioStudioId(schedule.getStudioId());
-//        var seatAvailable = seatRepository.findSeatAvailable(schedule.getScheduleId());
-//
-////        var isEmpty = film.isEmpty() || studio.isEmpty();
-////        if(isEmpty) throw new RuntimeException("Data not valid");
-//
-////        schedule.setStudio(studio.get());
-////        schedule.setFilm(film.get());
-//
-//        return scheduleRepository.save(schedule);
-//    }
-
-//    @Override
-//    public ScheduleRequestDTO save(ScheduleRequestDTO schedule) {
-//        System.out.println(schedule.toString());
-//        if(schedule.getPrice() <= 0 || schedule.getFromDate() > 0 || schedule.getToDate() > 0
-//                || schedule.getStudioId() > 0 || schedule.getFilmId() > 0)
-//            throw new RuntimeException("Data not valid");
-//
-//        var film = filmRepository.findById(schedule.getFilmId());
-//        var studio = studioRepository.findById(schedule.getStudioId());
-//        var seats = seatRepository.findAllByStudioStudioId(schedule.getStudioId());
-////        var seatAvailable = seatRepository.findSeatAvailable(schedule.getScheduleId());
-//
-//        var sceduled = scheduleRepository.save(schedule);
-//
-//
-////        var isEmpty = film.isEmpty() || studio.isEmpty();
-////        if(isEmpty) throw new RuntimeException("Data not valid");
-//
-////        schedule.setStudio(studio.get());
-////        schedule.setFilm(film.get());
-//
-//        return
-//    }
-
     /*
     * permasalahan ketika schedule di update studio maka payment yang sudah terjadi perlu overwrite id seat yang ada agar sesuai
     * id seat yang sesuai pada studio.

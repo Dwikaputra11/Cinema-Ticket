@@ -1,9 +1,5 @@
 package com.spring.binar.challenge_5.dto;
 
-import com.spring.binar.challenge_5.models.Payment;
-import com.spring.binar.challenge_5.models.Schedule;
-import com.spring.binar.challenge_5.models.Seat;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 
