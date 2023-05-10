@@ -1,5 +1,6 @@
 package com.spring.binar.challenge_5.service.implementation;
 
+import com.spring.binar.challenge_5.controller.rest.PaymentController;
 import com.spring.binar.challenge_5.dto.PaymentRequestDTO;
 import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
 import com.spring.binar.challenge_5.models.Invoice;
@@ -25,6 +26,8 @@ import java.util.Map;
 import com.spring.binar.challenge_5.repos.ScheduleRepository;
 import com.spring.binar.challenge_5.repos.StaffRepository;
 import com.spring.binar.challenge_5.service.PaymentService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +38,7 @@ import org.springframework.util.ResourceUtils;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
+    private static final Logger LOG = LogManager.getLogger(PaymentServiceImpl.class);
     @Autowired
     private ModelMapper modelMapper;
     private final PaymentRepository paymentRepository;
@@ -67,9 +71,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         var responses = payments.stream().map(payment -> {
             var seatsReserved = seatReservedRepository.findSeatsByPaymentPaymentId(payment.getPaymentId());
-            System.out.println("seat reserved: " + seatsReserved);
+//            LOG.info("seat reserved: {}",seatsReserved);
             var seats = seatsReserved.stream().map(it -> seatRepository.findById(it.getSeat().getSeatId()).orElseThrow()).toList();
-            System.out.println("seats " + seats);
+//            LOG.info("seats: {}", seats);
             return payment.toPaymentResponseDTO(seats);
         }).toList();
 

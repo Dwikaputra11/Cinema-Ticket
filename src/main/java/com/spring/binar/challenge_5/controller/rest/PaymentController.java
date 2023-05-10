@@ -8,6 +8,8 @@ import com.spring.binar.challenge_5.utils.ResponseHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ public class PaymentController {
     @Autowired
     ModelMapper modelMapper;
     private PaymentService paymentService;
+    private static final Logger log = LogManager.getLogger(PaymentController.class);
     private static final String SUCCESS_RETRIEVE_MSG = "Successfully retrieved data!";
     private static final String SUCCESS_EDIT_MSG = "Successfully edit data!";
 
