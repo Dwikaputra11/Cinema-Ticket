@@ -11,14 +11,6 @@ import java.util.List;
 @Service
 public class SeatReservedImpl implements SeatReservedService {
 
-    private final SeatReservedRepository seatReservedRepository;
-
-    @Autowired
-    public SeatReservedImpl(SeatReservedRepository seatReservedRepository) {
-        this.seatReservedRepository = seatReservedRepository;
-    }
-
-
     @Override
     public List<SeatReserved> findAll() {
         return null;

@@ -3,6 +3,7 @@ package com.spring.binar.challenge_5.service.implementation;
 import com.spring.binar.challenge_5.models.Costumer;
 import com.spring.binar.challenge_5.repos.CostumerRepository;
 import com.spring.binar.challenge_5.service.CostumerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,13 +12,10 @@ import org.springframework.stereotype.Service;
 import java.util.Calendar;
 
 @Service
+@RequiredArgsConstructor
 public class CostumerServiceImpl implements CostumerService {
 
     private final CostumerRepository costumerRepository;
-    @Autowired
-    public CostumerServiceImpl(CostumerRepository costumerRepository) {
-        this.costumerRepository = costumerRepository;
-    }
     @Override
     public Page<Costumer> findAll(Pageable pageable) {
         return costumerRepository.findAll(pageable);

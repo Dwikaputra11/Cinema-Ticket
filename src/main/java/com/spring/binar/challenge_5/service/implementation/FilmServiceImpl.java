@@ -3,6 +3,7 @@ package com.spring.binar.challenge_5.service.implementation;
 import com.spring.binar.challenge_5.models.Film;
 import com.spring.binar.challenge_5.repos.FilmRepository;
 import com.spring.binar.challenge_5.service.FilmService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,13 +12,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
-    @Autowired
-    public FilmServiceImpl(FilmRepository filmRepository) {
-        this.filmRepository = filmRepository;
-    }
     @Override
     public Page<Film> findAll(Pageable pageable) {
         return filmRepository.findAll(pageable);

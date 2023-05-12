@@ -10,7 +10,6 @@ import java.util.List;
 @Builder
 public class PaymentRequestDTO {
     int paymentId;
-    Date paymentDate;
     int amount;
     int scheduleId;
     int costumerId;

@@ -16,6 +16,7 @@ public class PaymentResponseDTO {
     private int paymentId;
     private Date paymentDate;
     private int amount;
+    private int moneyChange;
     private Schedule schedule;
     private Costumer costumer;
     private Staff staff;

@@ -3,7 +3,7 @@ package com.spring.binar.challenge_5.controller.rest;
 import com.spring.binar.challenge_5.models.Seat;
 import com.spring.binar.challenge_5.service.SeatService;
 import com.spring.binar.challenge_5.utils.ResponseHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,17 +11,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.spring.binar.challenge_5.utils.Constants.SUCCESS_EDIT_MSG;
+import static com.spring.binar.challenge_5.utils.Constants.SUCCESS_RETRIEVE_MSG;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class SeatController {
-    private final SeatService seatService;
-    private static final String SUCCESS_RETRIEVE_MSG = "Successfully retrieved data!";
-    private static final String SUCCESS_EDIT_MSG = "Successfully edit data!";
 
-    @Autowired
-    public SeatController(SeatService seatService) {
-        this.seatService = seatService;
-    }
+    private final SeatService seatService;
 
     @GetMapping("/seat")
     public ResponseEntity<Object> findAll(

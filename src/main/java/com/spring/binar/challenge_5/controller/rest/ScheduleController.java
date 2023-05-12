@@ -4,6 +4,7 @@ import com.spring.binar.challenge_5.dto.ScheduleRequestDTO;
 import com.spring.binar.challenge_5.dto.ScheduleResponseDTO;
 import com.spring.binar.challenge_5.service.ScheduleService;
 import com.spring.binar.challenge_5.utils.ResponseHandler;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -14,20 +15,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.spring.binar.challenge_5.utils.Constants.SUCCESS_EDIT_MSG;
+import static com.spring.binar.challenge_5.utils.Constants.SUCCESS_RETRIEVE_MSG;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class ScheduleController {
 
     @Autowired
     ModelMapper modelMapper;
     private final ScheduleService scheduleService;
-    private static final String SUCCESS_RETRIEVE_MSG = "Successfully retrieved data!";
-    private static final String SUCCESS_EDIT_MSG = "Successfully edit data!";
-
-    @Autowired
-    public ScheduleController(ScheduleService scheduleService) {
-        this.scheduleService = scheduleService;
-    }
 
     @GetMapping("/schedule")
     public ResponseEntity<Object> findAll(

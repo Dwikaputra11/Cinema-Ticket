@@ -25,9 +25,8 @@ public class Payment implements Serializable {
     @Column(name = "payment_id", nullable = false, unique = true)
     private int paymentId;
 
-    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     @Column(name = "payment_date")
-    private Date paymentDate;
+    private Long paymentDate;
 
     @Column(name = "amount")
     private int amount;
@@ -47,15 +46,15 @@ public class Payment implements Serializable {
     @ToString.Exclude
     private Staff staff;
     public List<SeatReserved> toSeatReserved(List<Seat> seats){
-        List<SeatReserved> seatReserveds= new ArrayList<>();
+        List<SeatReserved> seatsReserved= new ArrayList<>();
         for(Seat seat: seats){
-            seatReserveds.add(SeatReserved.builder()
+            seatsReserved.add(SeatReserved.builder()
                             .seat(seat)
                             .payment(this)
                             .schedule(this.getSchedule())
                             .build());
         }
-        return seatReserveds;
+        return seatsReserved;
     }
 
     public PaymentResponseDTO toPaymentResponseDTO(List<Seat> seats){
@@ -63,8 +62,9 @@ public class Payment implements Serializable {
                 .seatsReserved(seats)
                 .paymentId(this.paymentId)
                 .amount(this.amount)
+                .moneyChange(this.amount - this.getSchedule().getPrice())
                 .staff(this.staff)
-                .paymentDate(this.paymentDate)
+                .paymentDate(new Date(this.paymentDate))
                 .costumer(this.costumer)
                 .schedule(this.getSchedule())
                 .build();
@@ -74,7 +74,7 @@ public class Payment implements Serializable {
         return Invoice.builder()
         .costumerId(this.costumer.getCostumerId())
         .paymentId(this.paymentId)
-        .paymentDate(this.paymentDate)
+        .paymentDate(new Date(this.paymentDate))
         .amount(amount)
         .fromDate(this.schedule.getFromDate())
         .toDate(this.schedule.getToDate())

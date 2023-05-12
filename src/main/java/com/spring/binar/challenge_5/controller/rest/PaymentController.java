@@ -2,10 +2,10 @@ package com.spring.binar.challenge_5.controller.rest;
 
 import com.spring.binar.challenge_5.dto.PaymentRequestDTO;
 import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
-import com.spring.binar.challenge_5.models.Payment;
 import com.spring.binar.challenge_5.service.PaymentService;
 import com.spring.binar.challenge_5.utils.ResponseHandler;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import org.apache.logging.log4j.LogManager;
@@ -14,34 +14,29 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 
+import static com.spring.binar.challenge_5.utils.Constants.SUCCESS_EDIT_MSG;
+import static com.spring.binar.challenge_5.utils.Constants.SUCCESS_RETRIEVE_MSG;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class PaymentController {
 
-    @Autowired
-    ModelMapper modelMapper;
-    private PaymentService paymentService;
+//    @Autowired
+//    ModelMapper modelMapper;
+    private final PaymentService paymentService;
     private static final Logger log = LogManager.getLogger(PaymentController.class);
-    private static final String SUCCESS_RETRIEVE_MSG = "Successfully retrieved data!";
-    private static final String SUCCESS_EDIT_MSG = "Successfully edit data!";
-
-    @Autowired
-    public PaymentController(PaymentService paymentService) {
-        this.paymentService = paymentService;
-    }
 
     @GetMapping("/payment")
-    public ResponseEntity<Object> findAll(
-//            @RequestParam(defaultValue ="0") int page,
-//            @RequestParam(defaultValue ="10") int size
-    ){
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<Object> findAll(){
         List<PaymentResponseDTO> payments;
-//        Pageable pageable = PageRequest.of(page, size);
         payments = paymentService.findAll();
 
         return ResponseHandler.generateResponse(SUCCESS_RETRIEVE_MSG, HttpStatus.OK,payments);
@@ -83,9 +78,9 @@ public class PaymentController {
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK, id);
     }
 
-    private PaymentResponseDTO convertToDto(Payment payment) {
+    /*private PaymentResponseDTO convertToDto(Payment payment) {
         PaymentResponseDTO postDto = modelMapper.map(payment, PaymentResponseDTO.class);
         return postDto;
-    }
+    }*/
 
 }

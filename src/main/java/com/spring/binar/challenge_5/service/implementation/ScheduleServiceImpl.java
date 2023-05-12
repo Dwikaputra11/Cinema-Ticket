@@ -5,6 +5,7 @@ import com.spring.binar.challenge_5.dto.ScheduleResponseDTO;
 import com.spring.binar.challenge_5.models.Schedule;
 import com.spring.binar.challenge_5.repos.*;
 import com.spring.binar.challenge_5.service.ScheduleService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired
@@ -23,16 +25,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final StudioRepository studioRepository;
     private final FilmRepository filmRepository;
     private final SeatRepository seatRepository;
-    private final SeatReservedRepository seatReservedRepository;
-
-    @Autowired
-    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, StudioRepository studioRepository, FilmRepository filmRepository, SeatRepository seatRepository, SeatReservedRepository seatReservedRepository) {
-        this.scheduleRepository = scheduleRepository;
-        this.studioRepository = studioRepository;
-        this.filmRepository = filmRepository;
-        this.seatRepository = seatRepository;
-        this.seatReservedRepository = seatReservedRepository;
-    }
 
     @Override
     public Page<Schedule> findAll(Pageable pageable) {

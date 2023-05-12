@@ -3,6 +3,7 @@ package com.spring.binar.challenge_5.service.implementation;
 import com.spring.binar.challenge_5.controller.rest.PaymentController;
 import com.spring.binar.challenge_5.dto.PaymentRequestDTO;
 import com.spring.binar.challenge_5.dto.PaymentResponseDTO;
+import com.spring.binar.challenge_5.exception.PaymentErrorException;
 import com.spring.binar.challenge_5.models.Invoice;
 import com.spring.binar.challenge_5.models.Payment;
 import com.spring.binar.challenge_5.models.Seat;
@@ -10,6 +11,7 @@ import com.spring.binar.challenge_5.repos.*;
 import com.spring.binar.challenge_5.repos.CostumerRepository;
 import com.spring.binar.challenge_5.repos.PaymentRepository;
 
+import lombok.RequiredArgsConstructor;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -18,10 +20,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.spring.binar.challenge_5.repos.ScheduleRepository;
 import com.spring.binar.challenge_5.repos.StaffRepository;
@@ -36,27 +35,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
     private static final Logger LOG = LogManager.getLogger(PaymentServiceImpl.class);
-    @Autowired
-    private ModelMapper modelMapper;
     private final PaymentRepository paymentRepository;
     private final ScheduleRepository scheduleRepository;
     private final CostumerRepository costumerRepository;
     private final StaffRepository staffRepository;
     private final SeatReservedRepository seatReservedRepository;
     private final SeatRepository seatRepository;
-
-    @Autowired
-    public PaymentServiceImpl(PaymentRepository paymentRepository, ScheduleRepository scheduleRepository, CostumerRepository costumerRepository, StaffRepository staffRepository, SeatReservedRepository seatReservedRepository, SeatRepository seatRepository) {
-        this.paymentRepository = paymentRepository;
-        this.scheduleRepository = scheduleRepository;
-        this.costumerRepository = costumerRepository;
-        this.staffRepository = staffRepository;
-        this.seatReservedRepository = seatReservedRepository;
-        this.seatRepository = seatRepository;
-    }
 
     @Override
     public Page<Payment> findAll(Pageable pageable) {
@@ -71,13 +59,12 @@ public class PaymentServiceImpl implements PaymentService {
 
         var responses = payments.stream().map(payment -> {
             var seatsReserved = seatReservedRepository.findSeatsByPaymentPaymentId(payment.getPaymentId());
-//            LOG.info("seat reserved: {}",seatsReserved);
             var seats = seatsReserved.stream().map(it -> seatRepository.findById(it.getSeat().getSeatId()).orElseThrow()).toList();
-//            LOG.info("seats: {}", seats);
             return payment.toPaymentResponseDTO(seats);
         }).toList();
 
-        System.out.println("Response: " + responses);
+        LOG.info("Current time: {}", new Date().getTime());
+        LOG.info("Response: {}",responses);
 
         return responses;
     }
@@ -101,42 +88,43 @@ public class PaymentServiceImpl implements PaymentService {
         Invoice invoice = payment.toInvoice();
         dataList.add(invoice);
         JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(dataList);
-        Map<String, Object> parameters = new HashMap();
+        Map<String, Object> parameters = new HashMap<>();
         return JasperFillManager.fillReport(jasperReport, parameters, beanCollectionDataSource);
     }
 
     @Override
     public PaymentResponseDTO save(PaymentRequestDTO request) {
-        System.out.println(request.toString());
         if(request.getAmount() <= 0 || request.getStaffId() <= 0
                 || request.getScheduleId() <= 0 || request.getSeatIds().isEmpty())
-            throw new RuntimeException("Invalid Payment");
+            throw new PaymentErrorException("Invalid Payment");
 
         // check seats if exist
         List<Seat> seats = seatRepository.findAllById(request.getSeatIds());
-        System.out.println("seats : " + seats);
-        if(seats.isEmpty()) throw new RuntimeException("Seat not Available");
+        LOG.info("seats : {}",seats);
+        if(seats.isEmpty()) throw new PaymentErrorException("Seat not Available");
 
-        var schedule = scheduleRepository.findById(request.getScheduleId());
-        var staff = staffRepository.findById(request.getStaffId());
-        var costumer = costumerRepository.findById(request.getCostumerId());
+        var schedule    = scheduleRepository.findById(request.getScheduleId()).orElseThrow(() -> new PaymentErrorException("Schedule not found."));
+        var staff       = staffRepository.findById(request.getStaffId()).orElseThrow(() -> new PaymentErrorException("Staff not found."));
+        var costumer    = costumerRepository.findById(request.getCostumerId()).orElseThrow(() -> new PaymentErrorException("Costumer not found."));
 
-        var isEmpty = staff.isEmpty() || schedule.isEmpty() || costumer.isEmpty();
-        if(isEmpty) throw new RuntimeException("Data is empty");
+        if(request.getAmount() < schedule.getPrice()) {
+            var minMoney = schedule.getPrice() - request.getAmount();
+            throw new PaymentErrorException("Not enough money to continue the payment: -" + minMoney );
+        }
 
         var payment = new Payment();
 
-        payment.setStaff(staff.get());
-        payment.setSchedule(schedule.get());
-        payment.setCostumer(costumer.get());
-        payment.setPaymentDate(request.getPaymentDate());
+        payment.setStaff(staff);
+        payment.setSchedule(schedule);
+        payment.setCostumer(costumer);
+        payment.setPaymentDate(new Date().getTime());
         payment.setAmount(request.getAmount());
 
         payment = paymentRepository.save(payment);
 
         var seatReserved = payment.toSeatReserved(seats);
 
-        seatReserved.forEach(it -> System.out.println(it.toString()));
+        seatReserved.forEach(it -> LOG.info(it.toString()));
 
         // save each seat to db
         seatReserved.forEach(seatReservedRepository::save);
@@ -150,19 +138,22 @@ public class PaymentServiceImpl implements PaymentService {
         var payment = paymentRepository.findById(updatedPayment.getPaymentId()).orElseThrow();
 
         List<Seat> seats = seatRepository.findAllById(updatedPayment.getSeatIds());
-        System.out.println("seats : " + seats);
-        if(seats.isEmpty()) throw new RuntimeException("Seat not Available");
+        LOG.info("seats : {}",seats);
+        if(seats.isEmpty()) throw new PaymentErrorException("Seat not Available");
 
-        var schedule = scheduleRepository.findById(updatedPayment.getScheduleId());
-        var staff = staffRepository.findById(updatedPayment.getStaffId());
-        var costumer = costumerRepository.findById(updatedPayment.getCostumerId());
+        var schedule    = scheduleRepository.findById(updatedPayment.getScheduleId()).orElseThrow(() -> new PaymentErrorException("Schedule not found."));
+        var staff       = staffRepository.findById(updatedPayment.getStaffId()).orElseThrow(() -> new PaymentErrorException("Staff not found."));
+        var costumer    = costumerRepository.findById(updatedPayment.getCostumerId()).orElseThrow(() -> new PaymentErrorException("Costumer not found."));
 
-        if(schedule.isEmpty() || staff.isEmpty() || costumer.isEmpty()) throw new RuntimeException("No Item found");
+        if(updatedPayment.getAmount() < schedule.getPrice()) {
+            var minMoney = schedule.getPrice() - updatedPayment.getAmount();
+            throw new PaymentErrorException("Not enough money to continue the payment: -" + minMoney );
+        }
 
-        payment.setSchedule(schedule.get());
-        payment.setStaff(staff.get());
-        payment.setCostumer(costumer.get());
-        payment.setPaymentDate(updatedPayment.getPaymentDate());
+        payment.setSchedule(schedule);
+        payment.setStaff(staff);
+        payment.setCostumer(costumer);
+        payment.setPaymentDate(new Date().getTime());
         payment.setAmount(updatedPayment.getAmount());
 
         payment = paymentRepository.save(payment);
@@ -178,7 +169,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void delete(int id) {
         var result = paymentRepository.findById(id);
-        if(result.isEmpty()) throw new RuntimeException("No Payment found");
+        if(result.isEmpty()) throw new PaymentErrorException("No Payment found");
 
         paymentRepository.delete(result.get());
     }
