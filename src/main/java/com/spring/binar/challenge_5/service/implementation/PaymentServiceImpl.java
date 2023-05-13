@@ -101,6 +101,7 @@ public class PaymentServiceImpl implements PaymentService {
         // check seats if exist
         List<Seat> seats = seatRepository.findAllById(request.getSeatIds());
         LOG.info("seats : {}",seats);
+
         if(seats.isEmpty()) throw new PaymentErrorException("Seat not Available");
 
         var schedule    = scheduleRepository.findById(request.getScheduleId()).orElseThrow(() -> new PaymentErrorException("Schedule not found."));
@@ -112,13 +113,13 @@ public class PaymentServiceImpl implements PaymentService {
             throw new PaymentErrorException("Not enough money to continue the payment: -" + minMoney );
         }
 
-        var payment = new Payment();
-
-        payment.setStaff(staff);
-        payment.setSchedule(schedule);
-        payment.setCostumer(costumer);
-        payment.setPaymentDate(new Date().getTime());
-        payment.setAmount(request.getAmount());
+        var payment = Payment.builder()
+                .paymentDate(new Date().getTime())
+                .schedule(schedule)
+                .staff(staff)
+                .costumer(costumer)
+                .amount(request.getAmount())
+                .build();
 
         payment = paymentRepository.save(payment);
 

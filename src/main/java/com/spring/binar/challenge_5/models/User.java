@@ -1,5 +1,7 @@
 package com.spring.binar.challenge_5.models;
 
+import com.spring.binar.challenge_5.dto.AuthenticationResponseDTO;
+import com.spring.binar.challenge_5.dto.UserResponseDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +33,25 @@ public class User implements UserDetails {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+
+    public UserResponseDTO convertToUserResponseDto(){
+        return UserResponseDTO.builder()
+                .username(username)
+                .phoneNumber(phoneNumber)
+                .role(role.name())
+                .build();
+    }
+
+    public AuthenticationResponseDTO convertToAuthenticationResponseDto(String accessToken, String refreshToken){
+        return AuthenticationResponseDTO.builder()
+                .username(username)
+                .phoneNumber(phoneNumber)
+                .role(role.name())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 
 
     @Override

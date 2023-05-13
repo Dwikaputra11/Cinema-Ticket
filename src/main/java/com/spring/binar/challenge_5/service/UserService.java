@@ -1,15 +1,16 @@
 package com.spring.binar.challenge_5.service;
 
-import com.spring.binar.challenge_5.dto.AuthenticationRequestDTO;
-import com.spring.binar.challenge_5.dto.AuthenticationResponseDTO;
-import com.spring.binar.challenge_5.dto.UserRegisterDTO;
-import com.spring.binar.challenge_5.dto.UserUpdateRequestDTO;
+import com.spring.binar.challenge_5.dto.*;
 import com.spring.binar.challenge_5.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface UserService {
-    Page<User> findAll(Pageable pageable);
+    Page<UserResponseDTO> findAll(Pageable pageable);
+
+    List<UserResponseDTO> findAll();
 
     AuthenticationResponseDTO authentication(AuthenticationRequestDTO request);
 

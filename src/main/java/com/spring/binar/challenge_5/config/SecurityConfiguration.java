@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -26,21 +27,17 @@ public class SecurityConfiguration {
         http
                 .csrf()
                 .disable()
-                .authorizeHttpRequests(configure -> configure
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/schedule/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/payment/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/payment/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/payment/**").hasAnyRole(Role.STAFF.name(), Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.DELETE, "/api/payment/**").hasAnyRole(Role.STAFF.name(), Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.GET,"/api/user/**").hasAnyRole(Role.STAFF.name(), Role.ADMIN.name())
-                        .requestMatchers("api/user/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/api/film/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/api/studio/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/api/staff/**").hasRole(Role.ADMIN.name())
-                        .anyRequest()
-                        .authenticated()
-                )
+                .authorizeHttpRequests()
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/schedule/**","/api/payment/*").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/payment").permitAll()
+                .requestMatchers("/api/**").hasAuthority(Role.ADMIN.name())
+                .requestMatchers(HttpMethod.POST, "/api/payment/**").hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE, "/api/payment/**").hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET,"/api/user/**").hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
+                .anyRequest()
+                .authenticated()
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

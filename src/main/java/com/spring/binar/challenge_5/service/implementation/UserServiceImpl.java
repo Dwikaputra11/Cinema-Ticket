@@ -1,13 +1,10 @@
 package com.spring.binar.challenge_5.service.implementation;
 
+import com.spring.binar.challenge_5.dto.*;
+import com.spring.binar.challenge_5.models.User;
 import com.spring.binar.challenge_5.security.JwtService;
-import com.spring.binar.challenge_5.dto.AuthenticationRequestDTO;
-import com.spring.binar.challenge_5.dto.AuthenticationResponseDTO;
-import com.spring.binar.challenge_5.dto.UserRegisterDTO;
-import com.spring.binar.challenge_5.dto.UserUpdateRequestDTO;
 import com.spring.binar.challenge_5.exception.UserErrorException;
 import com.spring.binar.challenge_5.models.Role;
-import com.spring.binar.challenge_5.models.User;
 import com.spring.binar.challenge_5.repos.UserRepository;
 import com.spring.binar.challenge_5.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +29,15 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authManager;
 
     @Override
-    public Page<User> findAll(Pageable pageable) {
+    public Page<UserResponseDTO> findAll(Pageable pageable) {
         return null;
+    }
+
+    @Override
+    public List<UserResponseDTO> findAll() {
+        return userRepository.findAll().stream()
+                .map(User::convertToUserResponseDto)
+                .toList();
     }
 
     @Override
@@ -47,15 +52,12 @@ public class UserServiceImpl implements UserService {
         var user    = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new UserErrorException("User not found."));
         var claims  = new HashMap<String, Object>();
         claims.put("phoneNumber", user.getPhoneNumber());
+        claims.put("role", user.getRole().name());
 
-        var jwtToken = jwtService.generateToken(claims,user);
+        var accessToken = jwtService.generateToken(claims,user);
+        var refreshToken = jwtService.generateRefreshToken(claims,user);
 
-        return AuthenticationResponseDTO.builder()
-                .username(user.getUsername())
-                .phoneNumber(user.getPhoneNumber())
-                .token(jwtToken)
-                .role(user.getRole().name())
-                .build();
+        return user.convertToAuthenticationResponseDto(accessToken, refreshToken);
     }
 
     @Override
@@ -73,25 +75,17 @@ public class UserServiceImpl implements UserService {
         if(!isRoleValid(request.getRole().toUpperCase()))
             throw new UserErrorException("Role must be a valid role (COSTUMER, ADMIN, STAFF)");
 
-        var user = User.builder()
-                .username(request.getUsername())
-                .phoneNumber(request.getPhoneNumber())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(getRole(request.getRole().toUpperCase()))
-                .build();
+        var user = request.convertToUser(getRole(request.getRole().toUpperCase()), passwordEncoder.encode(request.getPassword()));
 
         userRepository.save(user);
         var claims  = new HashMap<String, Object>();
         claims.put("phoneNumber", user.getPhoneNumber());
+        claims.put("role", user.getRole().name());
 
-        var jwtToken = jwtService.generateToken(claims,user);
+        var accessToken = jwtService.generateToken(claims,user);
+        var refreshToken = jwtService.generateRefreshToken(claims,user);
 
-        return AuthenticationResponseDTO.builder()
-                .username(user.getUsername())
-                .phoneNumber(user.getPhoneNumber())
-                .token(jwtToken)
-                .role(user.getRole().name())
-                .build();
+        return user.convertToAuthenticationResponseDto(accessToken, refreshToken);
     }
 
     @Override
