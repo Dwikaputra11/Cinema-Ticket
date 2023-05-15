@@ -29,4 +29,6 @@ public interface SeatRepository extends JpaRepository <Seat, Integer>{
     List<Seat> findAvailableSeats(Integer scheduleId, Integer studioId);
 
     List<Seat> findByStudioStudioId(Integer studioId);
+
+//    boolean existByStudioStudioId(Integer studioId);
 }

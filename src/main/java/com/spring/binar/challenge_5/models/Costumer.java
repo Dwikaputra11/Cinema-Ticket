@@ -11,6 +11,7 @@ import java.util.Date;
 @Setter @Getter
 @NoArgsConstructor
 @Builder
+@ToString
 @AllArgsConstructor
 @Table(name="costumer", schema = "public")
 public class Costumer implements Serializable {
@@ -29,6 +30,9 @@ public class Costumer implements Serializable {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "photo_url")
+    private String photoUrl;
+
     @OneToOne(targetEntity = User.class, cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User userProfile;
@@ -45,6 +49,7 @@ public class Costumer implements Serializable {
                 .firstName(this.firstName)
                 .lastName(this.lastName)
                 .userProfile(this.userProfile.convertToUserResponseDto())
+                .photoUrl(this.photoUrl)
                 .build();
     }
 

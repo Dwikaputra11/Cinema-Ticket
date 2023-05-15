@@ -98,15 +98,19 @@ public class PaymentServiceImpl implements PaymentService {
                 || request.getScheduleId() <= 0 || request.getSeatIds().isEmpty())
             throw new PaymentErrorException("Invalid Payment");
 
-        // check seats if exist
-        List<Seat> seats = seatRepository.findAllById(request.getSeatIds());
-        LOG.info("seats : {}",seats);
-
-        if(seats.isEmpty()) throw new PaymentErrorException("Seat not Available");
-
         var schedule    = scheduleRepository.findById(request.getScheduleId()).orElseThrow(() -> new PaymentErrorException("Schedule not found."));
         var staff       = staffRepository.findById(request.getStaffId()).orElseThrow(() -> new PaymentErrorException("Staff not found."));
         var costumer    = costumerRepository.findById(request.getCostumerId()).orElseThrow(() -> new PaymentErrorException("Costumer not found."));
+        // check seats if exist
+        List<Seat> seats = seatRepository.findAllById(request.getSeatIds());
+        LOG.info("seats : {}",seats);
+        if(seats.isEmpty()) throw new PaymentErrorException("Seat not Available");
+
+        var isSeatsInOneStudio = seats.stream().allMatch(seat ->
+                seat.getStudio().getStudioId() == schedule.getStudio().getStudioId()
+        );
+
+        if(!isSeatsInOneStudio) throw new PaymentErrorException("Seat selected is not in one studio");
 
         if(request.getAmount() < schedule.getPrice()) {
             var minMoney = schedule.getPrice() - request.getAmount();

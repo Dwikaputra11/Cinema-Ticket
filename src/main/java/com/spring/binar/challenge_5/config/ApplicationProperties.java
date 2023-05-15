@@ -15,4 +15,7 @@ public class ApplicationProperties {
     private String jwtSecret;
     private int jwtExpirationMs;
     private int jwtRefreshExpirationMs;
+    private String cloudinaryCloudName;
+    private String cloudinaryApiKey;
+    private String cloudinaryApiSecret;
 }

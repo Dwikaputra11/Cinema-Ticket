@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,17 +29,20 @@ public class SecurityConfiguration {
         http
                 .csrf()
                 .disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/auth/**", "/error").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/schedule/**","/api/payment/*").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/payment").permitAll()
-                .requestMatchers("/api/**").hasAuthority(Role.ADMIN.name())
-                .requestMatchers(HttpMethod.GET,"/api/user").hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.POST, "/api/payment/**").hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.DELETE, "/api/payment/**").hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
-                .anyRequest()
-                .authenticated()
-                .and()
+                .authorizeHttpRequests(request ->
+                        request.requestMatchers("/api/auth/**", "/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/schedule/**","/api/payment/**", "/api/film/**", "/api/user/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/payment").authenticated()
+                )
+                .authorizeHttpRequests(request ->
+                        request.requestMatchers(HttpMethod.GET, "/api/payment","/api/staff/*")
+                                .hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
+                )
+                .authorizeHttpRequests(request ->
+                        request.requestMatchers(HttpMethod.GET, "/api/costumer").hasAuthority(Role.ADMIN.name())
+                                .requestMatchers("/api/costumer/**").hasAnyAuthority(Role.ADMIN.name(), Role.COSTUMER.name())
+                )
+                .authorizeHttpRequests(request -> request.anyRequest().authenticated())
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
