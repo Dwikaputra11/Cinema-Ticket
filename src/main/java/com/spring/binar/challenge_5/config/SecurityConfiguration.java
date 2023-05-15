@@ -4,8 +4,6 @@ import com.spring.binar.challenge_5.models.Role;
 import com.spring.binar.challenge_5.security.JwtAuthEntryPoint;
 import com.spring.binar.challenge_5.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,9 +33,9 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/api/schedule/**","/api/payment/*").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/payment").permitAll()
                 .requestMatchers("/api/**").hasAuthority(Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET,"/api/user").hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST, "/api/payment/**").hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.DELETE, "/api/payment/**").hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.GET,"/api/user/**").hasAnyAuthority(Role.STAFF.name(), Role.ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()
