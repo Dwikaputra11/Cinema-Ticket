@@ -1,14 +1,13 @@
 package com.spring.binar.challenge_5.security;
 
+import com.spring.binar.challenge_5.config.ApplicationProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import org.apache.juli.logging.LogFactory;
-import org.apache.logging.log4j.LogManager;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +18,17 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
-    @Value("${binar.spring.jwtSecret}")
+/*    @Value("${binar.spring.jwtSecret}")
     private String JWT_SECRET_KEY;
     @Value("${binar.spring.jwtExpirationMs}")
     private int JWT_EXPIRATION_MS;
     @Value("${binar.spring.jwtRefreshExpirationMs}")
-    private int JWT_REFRESH_EXPIRATION_MS;
+    private int JWT_REFRESH_EXPIRATION_MS;*/
+
+    private final ApplicationProperties appProperties;
 
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
     public String extractUsername(String token) {
@@ -88,7 +90,7 @@ public class JwtService {
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_MS))
+                .setExpiration(new Date(System.currentTimeMillis() + appProperties.getJwtExpirationMs()))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -106,13 +108,13 @@ public class JwtService {
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_REFRESH_EXPIRATION_MS))
+                .setExpiration(new Date(System.currentTimeMillis() + appProperties.getJwtRefreshExpirationMs()))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(appProperties.getJwtSecret());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

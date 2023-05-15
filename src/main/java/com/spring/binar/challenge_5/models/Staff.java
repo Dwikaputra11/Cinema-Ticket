@@ -1,9 +1,11 @@
 package com.spring.binar.challenge_5.models;
 
+import com.spring.binar.challenge_5.dto.StaffResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Setter @Getter
@@ -21,10 +23,23 @@ public class Staff implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "contact")
-    private String contact;
+    @Column(name = "id_card", nullable = false, unique = true)
+    private String idCard;
 
-//    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", shape = JsonFormat.Shape.STRING)
-//    @Column(name = "last_update")
-//    private Date lastUpdate;
+    @OneToOne(targetEntity = User.class, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    private User userProfile;
+
+    @Column(name = "last_update")
+    private long lastUpdate;
+    public StaffResponseDto convertToStaffDto(){
+        return StaffResponseDto.builder()
+                .staffId(this.staffId)
+                .idCard(this.idCard)
+                .name(this.name)
+                .lastUpdate(new Date(this.lastUpdate))
+                .userProfile(this.userProfile.convertToUserResponseDto())
+                .build();
+    }
+
 }

@@ -29,7 +29,7 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public Staff save(Staff staff) {
         if (staff.getName() == null || staff.getName().isEmpty()
-                || staff.getContact() == null || staff.getContact().isEmpty()
+                || staff.getIdCard() == null || staff.getIdCard().length() != 10
         )  throw new RuntimeException("Data staff is not valid");
 
         staff.setStaffId(0);
@@ -48,7 +48,7 @@ public class StaffServiceImpl implements StaffService {
             throw new RuntimeException("Data staff id: " + updatedStaff.getStaffId() + " is not exist.");
 
         var staff = result.get();
-        staff.setContact(updatedStaff.getContact());
+        staff.setIdCard(updatedStaff.getIdCard());
         staff.setName(updatedStaff.getName());
         return staffRepository.save(staff);
     }

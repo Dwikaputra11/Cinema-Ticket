@@ -30,14 +30,14 @@ public class CostumerServiceImpl implements CostumerService {
 
     @Override
     public Costumer save(Costumer costumer) {
-        if (costumer.getUsername() == null || costumer.getUsername().isEmpty()
+        if (costumer.getFirstName() == null || costumer.getLastName().isEmpty()
                 || costumer.getEmail() == null || costumer.getEmail().isEmpty()
         )  throw new RuntimeException("Data costumer is not valid");
 
         costumer.setCostumerId(0);
 
         var date = Calendar.getInstance();
-        costumer.setLastUpdate(date.getTime());
+        costumer.setLastUpdate(date.getTime().getTime());
 
         return costumerRepository.save(costumer);
     }
@@ -51,7 +51,7 @@ public class CostumerServiceImpl implements CostumerService {
 
         var costumer = result.get();
         costumer.setEmail(updatedCostumer.getEmail());
-        costumer.setUsername(updatedCostumer.getUsername());
+        costumer.setFirstName(updatedCostumer.getFirstName());
         return costumerRepository.save(costumer);
     }
 

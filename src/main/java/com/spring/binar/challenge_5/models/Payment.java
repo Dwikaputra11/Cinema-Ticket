@@ -63,9 +63,9 @@ public class Payment implements Serializable {
                 .paymentId(this.paymentId)
                 .amount(this.amount)
                 .moneyChange(this.amount - this.getSchedule().getPrice())
-                .staff(this.staff)
+                .staff(this.staff.convertToStaffDto())
                 .paymentDate(new Date(this.paymentDate))
-                .costumer(this.costumer)
+                .costumer(this.costumer.convertToCostumerDto())
                 .schedule(this.getSchedule())
                 .build();
     }
@@ -80,7 +80,7 @@ public class Payment implements Serializable {
         .toDate(this.schedule.getToDate())
         .title(this.schedule.getFilm().getTitle())
         .studioName(this.schedule.getStudio().getName())
-        .username(this.costumer.getUsername())
+        .username(this.costumer.getFirstName())
         .build();
     }
 }

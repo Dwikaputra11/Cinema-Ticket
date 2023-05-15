@@ -1,6 +1,7 @@
 package com.spring.binar.challenge_5.exception;
 
 import com.spring.binar.challenge_5.utils.ResponseHandler;
+import io.jsonwebtoken.ClaimJwtException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataAccessException;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -72,12 +74,30 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({ UserErrorException.class })
-    public ResponseEntity<Object> handleAuthException(final RuntimeException ex, final WebRequest request) {
+    public ResponseEntity<Object> handleUserException(final RuntimeException ex, final WebRequest request) {
         logger.info(ex.getClass().getName());
         logger.error("error", ex);
         logger.info("request: " + request.getContextPath());
 
         return ResponseHandler.generateResponse(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST, null);
+    }
+
+    @ExceptionHandler({ AuthenticationException.class })
+    public ResponseEntity<Object> handleAuthException(final RuntimeException ex, final WebRequest request) {
+        logger.info(ex.getClass().getName());
+        logger.error("error", ex);
+        logger.info("request: " + request.getContextPath());
+
+        return ResponseHandler.generateResponse(ex.getLocalizedMessage(), HttpStatus.UNAUTHORIZED, null);
+    }
+
+    @ExceptionHandler({ ClaimJwtException.class })
+    public ResponseEntity<Object> handleExpiredJwtException(final RuntimeException ex, final WebRequest request) {
+        logger.info(ex.getClass().getName());
+        logger.error("error", ex);
+        logger.info("request: " + request.getContextPath());
+
+        return ResponseHandler.generateResponse(ex.getLocalizedMessage(), HttpStatus.UNAUTHORIZED, null);
     }
 
     @ExceptionHandler({ RuntimeException.class })
