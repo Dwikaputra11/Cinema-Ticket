@@ -68,25 +68,20 @@ public class CostumerServiceImpl implements CostumerService {
         if(!Objects.requireNonNull(file.getContentType()).startsWith("image")) throw new RuntimeException("Your file is not an image, please check again.");
         logger.info("file name: {}", file.getOriginalFilename());
 
-        var costumer = costumerRepository.findById(costumerId).orElseThrow(() -> new RuntimeException("Data costumer is not exist"));
+        var costumer    = costumerRepository.findById(costumerId).orElseThrow(() -> new RuntimeException("Data costumer is not exist"));
+        String publicId = costumer.getFirstName().toLowerCase() + "_" + costumer.getLastName().toLowerCase() + "_" + costumer.getCostumerId();
 
-        if(costumer.getPhotoUrl() != null){
-            var publicId = costumer.getUserProfile().getUsername() + "_" + costumer.getCostumerId();
+        if(costumer.getPhotoUrl() != null)
             cloudinaryService.deleteFile(publicId);
-        }
 
         logger.info(costumer);
-
-        String publicId = costumer.getUserProfile().getUsername() + "_" + costumer.getCostumerId();
 
         String url = cloudinaryService.uploadFile(file, publicId);
         logger.info("photo url: {}", url);
 
         costumer.setPhotoUrl(url);
 
-
         return costumerRepository.save(costumer).convertToCostumerDto();
-//        return null;
     }
 
     @Override

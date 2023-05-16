@@ -1,56 +1,92 @@
 package com.spring.binar.challenge_5.service.implementation;
 
+import com.spring.binar.challenge_5.dto.StaffResponseDto;
 import com.spring.binar.challenge_5.models.Staff;
 import com.spring.binar.challenge_5.repos.StaffRepository;
 import com.spring.binar.challenge_5.service.StaffService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class StaffServiceImpl implements StaffService {
     private final StaffRepository staffRepository;
+    private final CloudinaryService cloudinaryService;
+    private final Logger logger = LoggerFactory.getLogger(StaffServiceImpl.class);
 
     @Override
-    public Page<Staff> findAll(Pageable pageable) {
-        return staffRepository.findAll(pageable);
+    public Page<StaffResponseDto> findAll(Pageable pageable) {
+        return staffRepository.findAll(pageable).map(Staff::convertToStaffDto);
     }
 
     @Override
-    public Staff findById(int id) {
-        var staff = staffRepository.findById(id);
-        if(staff.isEmpty()) throw new RuntimeException("Data staff id: " + id + " is not exist.");
-        return staff.get();
+    public List<StaffResponseDto> findAll() {
+        return staffRepository.findAll()
+                .stream()
+                .map(Staff::convertToStaffDto)
+                .toList();
     }
 
     @Override
-    public Staff save(Staff staff) {
+    public StaffResponseDto findById(int id) {
+        var staff = staffRepository.findById(id).orElseThrow(() -> new RuntimeException("Could not find staff"));
+
+        return staff.convertToStaffDto();
+    }
+
+    @Override
+    public StaffResponseDto save(Staff staff) {
         if (staff.getName() == null || staff.getName().isEmpty()
                 || staff.getIdCard() == null || staff.getIdCard().length() != 10
         )  throw new RuntimeException("Data staff is not valid");
 
         staff.setStaffId(0);
+        staff.setLastUpdate(System.currentTimeMillis());
 
-//        var date = Calendar.getInstance();
-//        staff.setLastUpdate(date.getTime());
-
-        return staffRepository.save(staff);
+        return staffRepository.save(staff).convertToStaffDto();
     }
 
     @Override
-    public Staff update(Staff updatedStaff) {
-        var result = staffRepository.findById(updatedStaff.getStaffId());
+    public StaffResponseDto save(MultipartFile file, Integer staffId) {
+        if(file == null || staffId == null) throw new RuntimeException("Please check again your input, it can't empty");
 
-        if(result.isEmpty())
-            throw new RuntimeException("Data staff id: " + updatedStaff.getStaffId() + " is not exist.");
+        if(!Objects.requireNonNull(file.getContentType()).startsWith("image")) throw new RuntimeException("Your file is not an image, please check again.");
+        logger.info("file name: {}", file.getOriginalFilename());
 
-        var staff = result.get();
-        staff.setIdCard(updatedStaff.getIdCard());
-        staff.setName(updatedStaff.getName());
-        return staffRepository.save(staff);
+        var staff       = staffRepository.findById(staffId).orElseThrow(() -> new RuntimeException("Data costumer is not exist"));
+        String publicId = staff.getName().toLowerCase().replace(' ', '_') + "_s_" + staff.getStaffId();
+
+        if(staff.getPhotoUrl() != null)
+            cloudinaryService.deleteFile(publicId);
+
+        logger.info("staff: {}", staff);
+
+        String url = cloudinaryService.uploadFile(file, publicId);
+        logger.info("photo url: {}", url);
+
+        staff.setPhotoUrl(url);
+
+        return staffRepository.save(staff).convertToStaffDto();
+    }
+
+    @Override
+    public StaffResponseDto update(Staff updatedStaff) {
+        var result = staffRepository.findById(updatedStaff.getStaffId()).orElseThrow(() -> new RuntimeException("Could not find staff"));;
+
+        result.setIdCard(updatedStaff.getIdCard());
+        result.setName(updatedStaff.getName());
+        result.setLastUpdate(System.currentTimeMillis());
+
+        return staffRepository.save(result).convertToStaffDto();
     }
 
     @Override

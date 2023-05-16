@@ -52,13 +52,12 @@ public class CostumerController {
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK,film);
     }
 
-    @PutMapping(value = "/costumer/{costumerId}/photo", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(value = "/costumer/{costumerId}/photo", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<Object> savePhoto(
             @RequestParam("photo") MultipartFile file,
             @PathVariable("costumerId") Integer costumerId
     ){
-        costumerService.save(file, costumerId);
-        return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK,file);
+        return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK,costumerService.save(file, costumerId));
     }
 
     @PutMapping("/costumer")

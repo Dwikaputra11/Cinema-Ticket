@@ -9,6 +9,7 @@ import java.util.Date;
 
 @Entity
 @Setter @Getter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -26,6 +27,9 @@ public class Staff implements Serializable {
     @Column(name = "id_card", nullable = false, unique = true)
     private String idCard;
 
+    @Column(name = "photo_url")
+    private String photoUrl;
+
     @OneToOne(targetEntity = User.class, cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User userProfile;
@@ -37,9 +41,9 @@ public class Staff implements Serializable {
                 .staffId(this.staffId)
                 .idCard(this.idCard)
                 .name(this.name)
+                .photoUrl(this.photoUrl)
                 .lastUpdate(new Date(this.lastUpdate))
                 .userProfile(this.userProfile.convertToUserResponseDto())
                 .build();
     }
-
 }

@@ -66,7 +66,7 @@ public class Payment implements Serializable {
                 .staff(this.staff.convertToStaffDto())
                 .paymentDate(new Date(this.paymentDate))
                 .costumer(this.costumer.convertToCostumerDto())
-                .schedule(this.getSchedule())
+                .schedule(this.schedule)
                 .build();
     }
 

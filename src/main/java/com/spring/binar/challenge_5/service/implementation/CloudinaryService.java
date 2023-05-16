@@ -9,13 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -27,15 +24,15 @@ public class CloudinaryService {
     public String uploadFile(MultipartFile file, String publicId){
         try {
             File uploadFile = new File(convertMultipartToFile(file).toUri());
-            logger.info("Uploading file " + uploadFile);
+            logger.info("Uploading file : {}", uploadFile);
             var uploadResult = cloudinaryConfig.uploader().upload(uploadFile, ObjectUtils.asMap("public_id", publicId));
             logger.info("upload to cloudinary: {}", uploadResult);
-//            boolean isDeleted = uploadFile.delete();
+            boolean isDeleted = uploadFile.delete();
 
-//            if (isDeleted)
-//                logger.info("File successfully deleted");
-//            else
-//                logger.error("File doesn't exist");
+            if (isDeleted)
+                logger.info("File successfully deleted");
+            else
+                logger.error("File doesn't exist");
 
             return uploadResult.get("url").toString();
         } catch (Exception e){
@@ -55,13 +52,13 @@ public class CloudinaryService {
         }
     }
 
+//    public void deleteFileFromLocal(File file) throws IOException {
+//        Files.delete(file.toPath());
+//    }
+
     private Path convertMultipartToFile(MultipartFile file) throws IOException {
         byte[] bytes = file.getBytes();
         Path path = Paths.get("C:/Users/Dwika/Documents/Dwika File/Temporary/",file.getOriginalFilename());
-        /*File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();*/
         var convPath = Files.write(path, bytes);
         logger.info("converted path: {}", convPath);
         return convPath;

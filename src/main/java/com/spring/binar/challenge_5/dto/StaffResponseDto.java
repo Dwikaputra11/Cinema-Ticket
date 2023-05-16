@@ -14,6 +14,8 @@ public class StaffResponseDto {
 
     private String idCard;
 
+    private String photoUrl;
+
     private UserResponseDTO userProfile;
 
     private Date lastUpdate;
