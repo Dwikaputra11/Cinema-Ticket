@@ -30,7 +30,7 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("/api/auth/**", "/error", "/auth/**").permitAll()
+                        request.requestMatchers("/api/auth/**", "/error","/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/schedule/**","/api/payment/**", "/api/film/**", "/api/user/*").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/payment").authenticated()
                 )
@@ -45,6 +45,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request -> request.anyRequest().authenticated())
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .formLogin().loginPage("/auth/public/login-form")
                 .and()
                 .authenticationProvider(authProvider)
                 .exceptionHandling()
