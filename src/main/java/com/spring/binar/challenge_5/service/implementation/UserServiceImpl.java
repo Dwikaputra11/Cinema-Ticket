@@ -66,6 +66,9 @@ public class UserServiceImpl implements UserService {
         if(request.getPassword() == null || request.getPhoneNumber() == null || request.getRole() == null || request.getUsername() == null)
             throw new UserErrorException("Input not valid! Please provide correct username, password, phone number and role");
 
+        if(userRepository.existsByUsername(request.getUsername()))
+            throw new UserErrorException("User already exists.");
+
         if(request.getUsername().isEmpty() || request.getPassword().isEmpty() || request.getPhoneNumber().isEmpty())
             throw new UserErrorException("Input is empty! Please fill with the correct username, password and phone number and role");
 

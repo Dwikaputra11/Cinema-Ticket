@@ -18,8 +18,8 @@ public class PaymentResponseDTO {
     private int amount;
     private int moneyChange;
     private Schedule schedule;
-    private Costumer costumer;
-    private Staff staff;
+    private CostumerResponseDto costumer;
+    private StaffResponseDto staff;
     private List<Seat> seatsReserved;
 }
 

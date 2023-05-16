@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,10 +21,11 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user", schema = "public")
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id",nullable = false)
     private int userId;
     @Column(name = "username", length = 50, nullable = false, unique = true)
     private String username;
@@ -37,8 +39,9 @@ public class User implements UserDetails {
 
     public UserResponseDTO convertToUserResponseDto(){
         return UserResponseDTO.builder()
-                .username(username)
-                .phoneNumber(phoneNumber)
+                .userId(this.userId)
+                .username(this.username)
+                .phoneNumber(this.phoneNumber)
                 .role(role.name())
                 .build();
     }

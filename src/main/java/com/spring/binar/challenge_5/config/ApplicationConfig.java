@@ -1,5 +1,8 @@
 package com.spring.binar.challenge_5.config;
 
+import com.cloudinary.Cloudinary;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.spring.binar.challenge_5.repos.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,11 +16,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
+    private final ApplicationProperties appProperties;
 
     @Bean
     public UserDetailsService userDetailsService(){
@@ -44,4 +51,18 @@ public class ApplicationConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public Cloudinary cloudinaryConfig(){
+        Map<String, String> config = new HashMap<>();
+        config.put("cloud_name", appProperties.getCloudinaryCloudName());
+        config.put("api_key", appProperties.getCloudinaryApiKey());
+        config.put("api_secret", appProperties.getCloudinaryApiSecret());
+
+        return new Cloudinary(config);
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+    }
 }

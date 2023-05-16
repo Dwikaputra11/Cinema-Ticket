@@ -1,17 +1,25 @@
 package com.spring.binar.challenge_5.service;
 
+import com.spring.binar.challenge_5.dto.StaffResponseDto;
 import com.spring.binar.challenge_5.models.Staff;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface StaffService {
-    Page<Staff> findAll(Pageable pageable);
+    Page<StaffResponseDto> findAll(Pageable pageable);
 
-    Staff findById(int id);
+    List<StaffResponseDto> findAll();
 
-    Staff save(Staff staff);
+    StaffResponseDto findById(int id);
 
-    Staff update(Staff updatedStaff);
+    StaffResponseDto save(Staff staff);
+
+    StaffResponseDto save(MultipartFile file, Integer staffId);
+
+    StaffResponseDto update(Staff updatedStaff);
 
     void delete(int id);
 }
