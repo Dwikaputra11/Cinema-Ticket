@@ -30,7 +30,7 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("/api/auth/**", "/error").permitAll()
+                        request.requestMatchers("/api/auth/**", "/error", "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/schedule/**","/api/payment/**", "/api/film/**", "/api/user/*").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/payment").authenticated()
                 )
