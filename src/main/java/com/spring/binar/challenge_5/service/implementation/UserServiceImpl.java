@@ -7,11 +7,14 @@ import com.spring.binar.challenge_5.exception.UserErrorException;
 import com.spring.binar.challenge_5.models.Role;
 import com.spring.binar.challenge_5.repos.UserRepository;
 import com.spring.binar.challenge_5.service.UserService;
+import com.spring.binar.challenge_5.utils.Constants;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +61,30 @@ public class UserServiceImpl implements UserService {
         var refreshToken = jwtService.generateRefreshToken(claims,user);
 
         return user.convertToAuthenticationResponseDto(accessToken, refreshToken);
+    }
+
+    @Override
+    public String authentication(AuthenticationRequestDTO request, HttpSession session) {
+        authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
+
+        var user    = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new UserErrorException("User not found."));
+        var accessToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        // set session to pass in next filter
+        session.setAttribute(Constants.ACCESS_TOKEN, accessToken);
+        session.setAttribute(Constants.REFRESH_TOKEN, refreshToken);
+
+//        if(authToken.isAuthenticated()){
+//            SecurityContextHolder.getContext().setAuthentication(authToken);
+//            session.setAttribute(Constants.LOGGED_USER, userRepository.findByUsername(SecurityService.findLoggedInUsername()));
+//        }
+
+        return "redirect:/web-public/schedule/list";
     }
 
     @Override

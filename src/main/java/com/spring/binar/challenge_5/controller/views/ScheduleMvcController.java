@@ -2,6 +2,7 @@ package com.spring.binar.challenge_5.controller.views;
 
 import com.spring.binar.challenge_5.dto.ScheduleResponseDTO;
 import com.spring.binar.challenge_5.service.ScheduleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,15 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "schedule")
+@RequiredArgsConstructor
+@RequestMapping(value = "/web-public/schedule")
 public class ScheduleMvcController {
 
     private final ScheduleService scheduleService;
-
-    @Autowired
-    public ScheduleMvcController(ScheduleService scheduleService) {
-        this.scheduleService = scheduleService;
-    }
 
     @GetMapping("/list")
     public String findAll(Model model){
@@ -57,7 +54,7 @@ public class ScheduleMvcController {
 
         scheduleService.delete(scheduleId);
 
-        return "redirect:/schedule/list";
+        return "redirect:/web-public/schedule/list";
     }
 
 

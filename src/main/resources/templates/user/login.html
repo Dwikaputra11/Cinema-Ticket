@@ -13,7 +13,7 @@
 </head>
 <body>
         <main style="width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;">
-            <form style="width: 350px;" action="#"th:action="@{/auth/public/login-form/save}" th:object="${user}" method="POST">
+            <form style="width: 350px;" action="#"th:action="@{/web-public/auth/login-form/save}" th:object="${user}" method="POST">
                 <!-- Email input -->
             <div class="form-outline mb-4">
                 <label class="form-label" for="username">Username</label>
@@ -31,7 +31,7 @@
           
             <!-- Register buttons -->
             <div class="text-center">
-              <p>Not a member? <a th:href="@{/auth/public/register-form}">Register</a></p>
+              <p>Not a member? <a th:href="@{/web-public/auth/register-form}">Register</a></p>
               
             </div>
           </form>
