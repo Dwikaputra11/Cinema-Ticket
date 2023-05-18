@@ -1,10 +1,13 @@
 package com.spring.binar.challenge_5.security;
 
+import com.spring.binar.challenge_5.utils.Constants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,25 +26,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String username;
+        String jwt = "";
+        String username = "";
+        final String requestUrl = request.getRequestURL().toString();
 
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request,response);
-            return;
+        // get session from mvc url to retrieve access token
+        if(requestUrl.contains("/web-public")){
+            var userRequest = request.getSession().getAttribute(Constants.ACCESS_TOKEN);
+            log.info("Access token: {}", userRequest);
+            if(userRequest instanceof String) jwt = (String) userRequest;
         }
 
-        jwt = authHeader.substring(7); // get token
-        username = jwtService.extractUsername(jwt);
+        log.info("path info: {}", request.getRequestURL());
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+        // if request is from api
+        if(requestUrl.contains("/api")){
+            final String authHeader = request.getHeader("Authorization");
+            if(authHeader == null || !authHeader.startsWith("Bearer ")){
+                filterChain.doFilter(request,response);
+                return;
+            }
+            jwt = authHeader.substring(7); // get token
+        }
+
+        if(!jwt.isEmpty()) username = jwtService.extractUsername(jwt);
+
+        if(!username.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if(jwtService.isTokenValid(jwt, userDetails)){

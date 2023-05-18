@@ -2,6 +2,7 @@ package com.spring.binar.challenge_5.service;
 
 import com.spring.binar.challenge_5.dto.*;
 import com.spring.binar.challenge_5.models.User;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,6 +14,8 @@ public interface UserService {
     List<UserResponseDTO> findAll();
 
     AuthenticationResponseDTO authentication(AuthenticationRequestDTO request);
+
+    String authentication(AuthenticationRequestDTO request, HttpSession session);
 
     AuthenticationResponseDTO register(UserRegisterDTO request);
 

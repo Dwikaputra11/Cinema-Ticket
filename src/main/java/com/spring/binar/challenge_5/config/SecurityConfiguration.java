@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,9 +29,10 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("/api/auth/**", "/error", "/auth/**").permitAll()
+                        request.requestMatchers("/api/auth/**", "/error","/web-public/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/schedule/**","/api/payment/**", "/api/film/**", "/api/user/*").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/payment").authenticated()
+                                .requestMatchers("/web-public/schedule/**").authenticated()
                 )
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(HttpMethod.GET, "/api/payment","/api/staff/*")
@@ -42,9 +42,12 @@ public class SecurityConfiguration {
                         request.requestMatchers(HttpMethod.GET, "/api/costumer").hasAuthority(Role.ADMIN.name())
                                 .requestMatchers("/api/costumer/**").hasAnyAuthority(Role.ADMIN.name(), Role.COSTUMER.name())
                 )
+                .authorizeHttpRequests(request -> request.requestMatchers("/api/**").hasAuthority(Role.ADMIN.name()))
                 .authorizeHttpRequests(request -> request.anyRequest().authenticated())
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .and()
+                .formLogin().loginPage("/auth/public/login-form")
                 .and()
                 .authenticationProvider(authProvider)
                 .exceptionHandling()
