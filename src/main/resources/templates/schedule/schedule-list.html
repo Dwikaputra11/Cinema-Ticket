@@ -14,7 +14,7 @@
 <div class="container">
   <h3>Schedule List</h3>
   <hr>
-  <div sec:authorize="hasRole('ADMIN')" >
+  <div sec:authorize="hasRole('ROLE_ADMIN')" >
     <a th:href="@{/web-public/schedule/add}"
        class="btn btn-primary btn-sm mb-3">
       Add Schedule
@@ -43,11 +43,11 @@
       <td th:text="${schedule.price}" />
       <!-- Add update button link-->
       <td>
-        <a sec:authorize="hasRole('ADMIN')" th:href="@{/web-public/schedule/update/{scheduleId}(scheduleId = ${schedule.scheduleId})}"
+        <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/web-public/schedule/update/{scheduleId}(scheduleId = ${schedule.scheduleId})}"
            class="btn btn-warning btn-sm">
           Update
         </a>
-        <a sec:authorize="hasRole('ADMIN')" th:href="@{/web-public/schedule/delete(scheduleId=${schedule.scheduleId})}"
+        <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/web-public/schedule/delete(scheduleId=${schedule.scheduleId})}"
            class="btn btn-danger btn-sm"
            onclick="if (!confirm('Are you sure you want sto delete this schedule?')) return false">
           Delete
@@ -56,6 +56,10 @@
            class="btn btn-info btn-sm">
           Show Details
         </a>
+        <div>
+          User: <span sec:authentication="name">NOT FOUND</span>
+          Spring Roles: <span sec:authentication="principal.authorities">NOT FOUND</span>
+        </div>
       </td>
     </tr>
     </tbody>

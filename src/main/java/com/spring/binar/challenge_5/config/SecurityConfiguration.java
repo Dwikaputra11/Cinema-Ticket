@@ -1,8 +1,11 @@
 package com.spring.binar.challenge_5.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.binar.challenge_5.dto.LogoutResponseDTO;
 import com.spring.binar.challenge_5.models.Role;
 import com.spring.binar.challenge_5.security.JwtAuthEntryPoint;
 import com.spring.binar.challenge_5.security.JwtAuthenticationFilter;
+import com.spring.binar.challenge_5.service.implementation.LogoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +14,10 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +27,7 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authProvider;
     private final JwtAuthEntryPoint authEntryPoint;
+    private final LogoutHandler logoutHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -53,7 +59,19 @@ public class SecurityConfiguration {
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout()
+                .logoutUrl("/api/auth/logout")
+                .addLogoutHandler(logoutHandler)
+                .logoutSuccessHandler(((request, response, authentication) -> {
+                    new ObjectMapper().writeValue(response.getOutputStream(),
+                            LogoutResponseDTO
+                                    .builder()
+                                    .message("Logged out successfully")
+                                    .build()
+                    );
+                    SecurityContextHolder.clearContext();
+                }));
 
         return http.build();
     }
