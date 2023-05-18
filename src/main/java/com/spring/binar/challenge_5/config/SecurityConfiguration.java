@@ -47,13 +47,17 @@ public class SecurityConfiguration {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
-                .formLogin().loginPage("/auth/public/login-form")
+                .formLogin().loginPage("/web-public/auth/login-form")
                 .and()
                 .authenticationProvider(authProvider)
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout()
+                .clearAuthentication(true)
+                .logoutUrl("/authLogout")
+                .logoutSuccessUrl("/web-public/auth/login-form").permitAll();
 
         return http.build();
     }
