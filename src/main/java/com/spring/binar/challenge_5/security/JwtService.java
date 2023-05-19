@@ -49,6 +49,10 @@ public class JwtService {
                 .getBody();
     }
 
+//    public void setExpiredToken(Date date, String token) {
+//        Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody().setExpiration(date);
+//    }
+
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);

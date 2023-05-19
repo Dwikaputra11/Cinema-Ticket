@@ -1,5 +1,6 @@
 package com.spring.binar.challenge_5.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.spring.binar.challenge_5.dto.AuthenticationResponseDTO;
 import com.spring.binar.challenge_5.dto.UserResponseDTO;
 import jakarta.persistence.*;
@@ -35,6 +36,10 @@ public class User implements UserDetails, Serializable {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
 
 
     public UserResponseDTO convertToUserResponseDto(){

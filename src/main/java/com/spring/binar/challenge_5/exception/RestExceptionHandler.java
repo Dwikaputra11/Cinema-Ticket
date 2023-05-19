@@ -82,6 +82,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseHandler.generateResponse(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST, null);
     }
 
+    @ExceptionHandler({ AuthException.class })
+    public ResponseEntity<Object> handleCostumeAuthException(final RuntimeException ex, final WebRequest request) {
+        logger.info(ex.getClass().getName());
+        logger.error("error", ex);
+        logger.info("request: " + request.getContextPath());
+
+        return ResponseHandler.generateResponse(ex.getLocalizedMessage(), HttpStatus.NOT_FOUND, null);
+    }
+
     @ExceptionHandler({ AuthenticationException.class })
     public ResponseEntity<Object> handleAuthException(final RuntimeException ex, final WebRequest request) {
         logger.info(ex.getClass().getName());

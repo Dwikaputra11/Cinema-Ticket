@@ -23,8 +23,8 @@ import static com.spring.binar.challenge_5.utils.Constants.SUCCESS_RETRIEVE_MSG;
 @RequestMapping("/api")
 public class ScheduleController {
 
-    @Autowired
-    ModelMapper modelMapper;
+//    @Autowired
+//    ModelMapper modelMapper;
     private final ScheduleService scheduleService;
 
     @GetMapping("/schedule")
