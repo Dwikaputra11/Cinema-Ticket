@@ -78,7 +78,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-            }else if(isTokenValid){
+            }else if(!isTokenValid){
                 throw new AuthException("Invalid token! your token may not exist in our server. Please try again");
             }
         }

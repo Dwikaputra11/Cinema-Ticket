@@ -32,10 +32,16 @@ public class LogoutService implements LogoutHandler {
         final String requestUrl = request.getRequestURL().toString();
 
         // get session from mvc url to retrieve access token
-        if(requestUrl.contains("/web-public")){
+        if(requestUrl.contains("/authLogout")){
+            var apiAccess = request.getHeader(HttpHeaders.AUTHORIZATION);
             var userRequest = request.getSession().getAttribute(Constants.ACCESS_TOKEN);
             logger.info("Access token: {}", userRequest);
-            if(userRequest instanceof String) jwt = (String) userRequest;
+            logger.info("Api Access: {}", apiAccess);
+            if(userRequest instanceof String) {
+                jwt = (String) userRequest;
+            }else if(apiAccess != null) {
+                jwt = apiAccess.substring(7);
+            }
         }
 
         logger.info("path info: {}", request.getRequestURL());

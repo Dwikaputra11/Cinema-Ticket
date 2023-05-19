@@ -60,18 +60,24 @@ public class SecurityConfiguration {
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout().invalidateHttpSession(false)
-                .logoutUrl("/api/auth/logout")
+                .logout().invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .logoutUrl("/authLogout")
                 .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler(((request, response, authentication) -> {
-                    new ObjectMapper().writeValue(response.getOutputStream(),
-                            LogoutResponseDTO
-                                    .builder()
-                                    .message("Logged out successfully")
-                                    .build()
-                    );
-                    SecurityContextHolder.clearContext();
-                }));
+                .logoutSuccessUrl("/web-public/auth/login-form");
+//                .logout().invalidateHttpSession(false)
+//                .logoutUrl("/api/auth/logout")
+//
+//                .addLogoutHandler(logoutHandler)
+//                .logoutSuccessHandler(((request, response, authentication) -> {
+//                    new ObjectMapper().writeValue(response.getOutputStream(),
+//                            LogoutResponseDTO
+//                                    .builder()
+//                                    .message("Logged out successfully")
+//                                    .build()
+//                    );
+//                    SecurityContextHolder.clearContext();
+//                }));
 
         return http.build();
     }
