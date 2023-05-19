@@ -1,5 +1,6 @@
 package com.spring.binar.challenge_5.security;
 
+import com.spring.binar.challenge_5.exception.AuthException;
 import com.spring.binar.challenge_5.repos.TokenRepository;
 import com.spring.binar.challenge_5.utils.Constants;
 import jakarta.servlet.FilterChain;
@@ -77,6 +78,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            }else if(isTokenValid){
+                throw new AuthException("Invalid token! your token may not exist in our server. Please try again");
             }
         }
         filterChain.doFilter(request, response);
