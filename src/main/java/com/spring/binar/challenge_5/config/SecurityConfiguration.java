@@ -35,9 +35,10 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("/api/auth/**", "/error","/web-public/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/schedule/**","/api/payment/**", "/api/film/**", "/api/user/*").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/payment").authenticated()
+                        request.requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
+                                .requestMatchers("/api/auth/**", "/error","/web-public/auth/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/schedule/**","/api/payment/**", "/api/film/**", "/api/user/*").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/api/payment").authenticated()
                                 .requestMatchers("/web-public/schedule/**").authenticated()
                 )
                 .authorizeHttpRequests(request ->
