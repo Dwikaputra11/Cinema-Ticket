@@ -2,6 +2,7 @@ package com.spring.binar.challenge_5.service.implementation;
 
 import com.spring.binar.challenge_5.dto.ScheduleRequestDTO;
 import com.spring.binar.challenge_5.dto.ScheduleResponseDTO;
+import com.spring.binar.challenge_5.dto.ScheduleUpdateRequestDTO;
 import com.spring.binar.challenge_5.models.Schedule;
 import com.spring.binar.challenge_5.repos.*;
 import com.spring.binar.challenge_5.service.ScheduleService;
@@ -19,8 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
 
-    @Autowired
-    ModelMapper modelMapper;
     private final ScheduleRepository scheduleRepository;
     private final StudioRepository studioRepository;
     private final FilmRepository filmRepository;
@@ -57,23 +56,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleResponseDTO save(ScheduleRequestDTO request) {
 
-        if(request.getScheduleId() > 0 && (scheduleRepository.findById(request.getScheduleId()).isPresent()))
-            throw new RuntimeException("Schedule already exists");
-
-        request.setScheduleId(0);
-
         if(request.getFromDate() > request.getToDate())
             throw new RuntimeException("Date range not valid");
 
-        var studio = studioRepository.findById(request.getStudioId());
-        var film = filmRepository.findById(request.getFilmId());
+        var studio = studioRepository.findById(request.getStudioId()).orElseThrow(() -> new RuntimeException("No studio or film found"));
+        var film = filmRepository.findById(request.getFilmId()).orElseThrow(() -> new RuntimeException("No studio or film found"));
 
-        if(studio.isEmpty() || film.isEmpty())
-            throw new RuntimeException("No studio or film found");
-
-        var schedule = modelMapper.map(request, Schedule.class);
-        schedule.setFilm(film.get());
-        schedule.setStudio(studio.get());
+        var schedule = request.toSchedule(studio, film);
 
         var result = scheduleRepository.save(schedule);
 
@@ -88,7 +77,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     * Jadi update hanya dibatasi pada perubahan film, price, dan tanggal
     * */
     @Override
-    public ScheduleResponseDTO update(ScheduleRequestDTO updatedSchedule) {
+    public ScheduleResponseDTO update(ScheduleUpdateRequestDTO updatedSchedule) {
         var request = scheduleRepository.findById(updatedSchedule.getScheduleId());
 
         if(request.isEmpty())

@@ -26,4 +26,6 @@ public interface UserService {
     RefreshTokenResponseDTO refreshToken(HttpServletRequest request);
 
     void delete(int id);
+
+    void deleteTokenWhenExpired();
 }

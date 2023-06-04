@@ -2,6 +2,7 @@ package com.spring.binar.challenge_5.controller.views;
 
 import com.spring.binar.challenge_5.dto.AuthenticationRequestDTO;
 import com.spring.binar.challenge_5.dto.UserRegisterDTO;
+import com.spring.binar.challenge_5.models.Role;
 import com.spring.binar.challenge_5.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -49,6 +50,7 @@ public class UserMvcController {
 
     @PostMapping("/register-form/save")
     public String registerPublicSave(@Valid @ModelAttribute("user") UserRegisterDTO userRegisterDTO){
+        userRegisterDTO.setRole(Role.COSTUMER.name());
         userService.register(userRegisterDTO);
         return "redirect:/user/login";
     }

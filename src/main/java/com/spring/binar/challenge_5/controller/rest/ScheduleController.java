@@ -2,6 +2,7 @@ package com.spring.binar.challenge_5.controller.rest;
 
 import com.spring.binar.challenge_5.dto.ScheduleRequestDTO;
 import com.spring.binar.challenge_5.dto.ScheduleResponseDTO;
+import com.spring.binar.challenge_5.dto.ScheduleUpdateRequestDTO;
 import com.spring.binar.challenge_5.service.ScheduleService;
 import com.spring.binar.challenge_5.utils.ResponseHandler;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +55,7 @@ public class ScheduleController {
     }
 
     @PutMapping("/schedule")
-    public ResponseEntity<Object> update(@RequestBody ScheduleRequestDTO schedule){
+    public ResponseEntity<Object> update(@RequestBody ScheduleUpdateRequestDTO schedule){
 //        var map = modelMapper.map(schedule, Schedule.class);
         var data = scheduleService.update(schedule);
         return ResponseHandler.generateResponse(SUCCESS_EDIT_MSG, HttpStatus.OK, data);

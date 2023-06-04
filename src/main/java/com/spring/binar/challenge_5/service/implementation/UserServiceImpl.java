@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -178,6 +180,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(int id) {
 
+    }
+
+    @Override
+    public void deleteTokenWhenExpired() {
+        log.info("deleteTokenWhenExpired: Started");
+        log.info("Token Expired: {}", tokenRepository.findAllByTokenExpiredIsTrue());
+        tokenRepository.deleteTokenByExpiredIsTrue();
     }
 
     /*

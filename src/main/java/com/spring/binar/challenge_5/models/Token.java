@@ -12,6 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Setter @Getter
 @Builder
+@ToString
 public class Token implements Serializable {
 
     @Id
